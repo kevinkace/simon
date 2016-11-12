@@ -4,14 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "bundle": "webpack ./public/js/index.js ./public/gen/js/index.js",
-    "watch": "webpack --progress --colors --watch ./public/js/index.js ./public/gen/js/index.js"
+    "bundle" : "webpack ./public/js/index.js ./public/gen/js/index.js",
+    "watch"  : "webpack --progress --colors --watch ./public/js/index.js ./public/gen/js/index.js",
+    "css"   : "modular-css -d ./public/css -o ./public/gen/css/index.css -j ./public/gen/js/classes.json \"./public/css/**.css\""
   },
   "author": "Kevin Cameron",
   "license": "ISC",
   "dependencies": {
     "lodash": "^4.16.6",
     "mainloop.js": "^1.0.3",
-    "mithril": "git+https://github.com/lhorie/mithril.js.git#rewrite"
+    "mithril": "git+https://github.com/lhorie/mithril.js.git#rewrite",
+    "modular-css": "^0.29.0"
   }
 }
