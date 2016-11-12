@@ -1,0 +1,17 @@
+{
+  "name": "gameloop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "bundle": "webpack ./public/js/index.js ./public/gen/js/index.js",
+    "watch": "webpack --progress --colors --watch ./public/js/index.js ./public/gen/js/index.js"
+  },
+  "author": "Kevin Cameron",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.16.6",
+    "mainloop.js": "^1.0.3",
+    "mithril": "git+https://github.com/lhorie/mithril.js.git#rewrite"
+  }
+}
