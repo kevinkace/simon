@@ -33,8 +33,8 @@ const get = require("lodash/get"),
     },
 
     updateLight = function(delta) {
-        let dur = 1000,
-            lit = 300,
+        let dur = 300,
+            lit = 100,
 
             idx;
 
@@ -87,11 +87,7 @@ const get = require("lodash/get"),
     update = function(delta) {
         state.content = Math.floor(Date.now()/1000);
 
-        // state.acc += 0.008 * delta;
-
         updateLight(delta);
-
-        // state.color = Math.sin(state.acc) > 0 ? "red" : "transparent";
     },
 
     draw = function() {
