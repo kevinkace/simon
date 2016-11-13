@@ -5,8 +5,11 @@ import css from "./index.css";
 
 import scenes from "./scenes";
 
+import GameState from "./GameState";
+
 let state = {
-    scenes : scenes
+    scenes    : scenes,
+    gameState : new GameState()
 };
 
 state.scene = state.scenes.intro;
