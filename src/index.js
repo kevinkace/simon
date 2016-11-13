@@ -13,16 +13,21 @@ let state = {
 };
 
 state.scene = state.scenes.intro;
+state.gameState.playback = true;
 
 const comp = {
         view : () => [
             m("div", { class : css.ticker }, state.ticker),
-            state.scene
+            m(state.scene, { state : state })
         ]
     },
 
     update = function(delta) {
         state.ticker = Math.floor(Date.now()/1000);
+
+        if(state.gameState.playback) {
+            state.gameState.playSteps(delta);
+        }
     },
 
     draw = function() {

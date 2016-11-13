@@ -1366,7 +1366,7 @@ m.parseQueryString = parse;
 m.buildQueryString = build;
 m.version = "bleeding-edge";
 
-var index$1 = m;
+var index = m;
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -1395,33 +1395,74 @@ var css = {
 
 var css$1 = {
     "pads": "mc4dd3a996_pads",
-    "pad": "mc4dd3a996_pad"
+    "pad": "mc4dd3a996_pad",
+    "padAlight": "mc4dd3a996_pad mc4dd3a996_padAlight"
 };
 
 const pads$$1 = [ 1, 2, 3, 4 ];
 
 var pads$1 = {
-    view : () =>
-        index$1("section", { class : css$1.pads },
-            pads$$1.map((pad$$1) =>
-                index$1("button", { class : css$1.pad }, pad$$1)
+    view : (vnode) => {
+        return index("section", { class : css$1.pads },
+            pads$$1.map((pad$$1, idx) =>
+                index("button", { class : vnode.attrs.state.gameState.alight === (idx + 1) ? css$1.padAlight : css$1.pad }, pad$$1)
             )
         )
+    }
 };
 
 var scenes = {
-    intro : [
-        index$1(pads$1)
-    ]
+    intro : {
+        view : (vnode) => {
+            return index(pads$1, vnode.attrs);
+        }
+    }
 };
 
 function GameState() {
     this.pattern = [1];
+    this.playback = false;
 }
 
 GameState.prototype = {
     addToPattern : function() {
         this.pattern.push(Math.floor(4 * Math.random()) + 1);
+    },
+
+    playSteps : function(delta) {
+        let period = 400,
+            thresh = 150;
+
+        // first light
+        if(!this.lit) {
+            this.lit = {
+                idx : 0,
+                dur : 0
+            };
+
+            this.alight = this.pattern[this.lit.idx];
+
+            return;
+        }
+
+        this.lit.dur += delta;
+
+        if(this.lit.dur >= thresh) {
+            this.alight = 0;
+        } else {
+            this.alight = this.pattern[this.lit.idx];
+        }
+
+        if(this.lit.dur >= period) {
+            this.lit.idx++;
+            this.lit.dur = 0;
+
+            // end of lights
+            if(this.lit.idx === this.pattern.length) {
+                delete this.lit;
+                this.playback = false;
+            }
+        }
     }
 };
 
@@ -1431,21 +1472,26 @@ let state = {
 };
 
 state.scene = state.scenes.intro;
+state.gameState.playback = true;
 
 const comp = {
         view : () => [
-            index$1("div", { class : css.ticker }, state.ticker),
-            state.scene
+            index("div", { class : css.ticker }, state.ticker),
+            index(state.scene, { state : state })
         ]
     };
 const update = function(delta) {
         state.ticker = Math.floor(Date.now()/1000);
+
+        if(state.gameState.playback) {
+            state.gameState.playSteps(delta);
+        }
     };
 const draw = function() {
-        index$1.redraw();
+        index.redraw();
     };
 
-index$1.mount(document.body, comp);
+index.mount(document.body, comp);
 
 mainloop_min.setUpdate(update).setDraw(draw).start();
 

@@ -7,3 +7,9 @@
 .pad {
     flex: 0 0 50%;
 }
+
+.padAlight {
+    composes: pad;
+
+    background: red;
+}
