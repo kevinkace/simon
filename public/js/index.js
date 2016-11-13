@@ -1,10 +1,10 @@
 "use strict";
 
 let state = {
-    color : "red",
-    acc : 0,
+    color  : "red",
+    acc    : 0,
     alight : false,
-    light : {}
+    light  : {}
 };
 
 const get = require("lodash/get"),
