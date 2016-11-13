@@ -4,11 +4,13 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "lint": "eslint ."
   },
   "author": "Kevin Cameron",
   "license": "ISC",
   "dependencies": {
+    "eslint-config-arenanet": "^3.0.1",
     "lodash": "^4.16.6",
     "mainloop.js": "^1.0.3",
     "mithril": "git+https://github.com/lhorie/mithril.js.git#rewrite",
@@ -16,5 +18,21 @@
     "rollup": "^0.36.3",
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-node-resolve": "^2.0.0"
+  },
+  "eslintConfig": {
+    "extends": "arenanet",
+    "env": {
+      "node": true,
+      "mocha": true,
+      "browser": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 5,
+      "sourceType": "module"
+    },
+    "rules": {
+      "prefer-template": "off",
+      "consistent-this": "off"
+    }
   }
 }

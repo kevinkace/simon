@@ -9,8 +9,8 @@ export default {
     dest   : "./public/gen/js/index.js",
     plugins : [
         nodeResolve({
-          jsnext : true,
-          main   : true
+          jsnext     : true,
+          extensions : [ ".js", ".json" ]
         }),
 
         commonjs({

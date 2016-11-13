@@ -1,5 +1,8 @@
 "use strict";
 
+import m from "mithril";
+import MainLoop from "mainloop.js";
+
 let state = {
     color  : "red",
     acc    : 0,
@@ -7,8 +10,10 @@ let state = {
     light  : {}
 };
 
-const get = require("lodash/get"),
-      m   = require("mithril"),
+const 
+// m   = require("mithril"),
+
+    // MainLoop = require("mainloop.js"),
 
     addLight = function() {
         // first click
@@ -81,8 +86,6 @@ const get = require("lodash/get"),
             }
         }, state.content)
     },
-
-    MainLoop = require("mainloop.js"),
 
     update = function(delta) {
         state.content = Math.floor(Date.now()/1000);
