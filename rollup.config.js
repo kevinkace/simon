@@ -4,7 +4,7 @@ import nodeResolve from "rollup-plugin-node-resolve";
 import css from "modular-css/rollup";
 
 export default {
-    entry  : "./public/js/index.js",
+    entry  : "./public/src/index.js",
     format : "cjs",
     dest   : "./public/gen/js/index.js",
     plugins : [
@@ -34,7 +34,7 @@ export default {
           // namedExports: { "./module.js": ["foo", "bar" ] }  // Default: undefined
         }),
         css({
-            css : "../public/gen/css/index.css"
+            css : "./public/gen/css/index.css"
         })
     ]
 };

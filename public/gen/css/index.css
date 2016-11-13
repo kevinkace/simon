@@ -1,5 +1,10 @@
-/* public/css/index.css */
-div {
-    position: absolute;
-    font-size: 4em
+/* public/src/views/pads.css */
+.mc836a7f22_pads {
+    height: 100vh;
+    display: flex;
+    flex-wrap: wrap
 }
+.mc836a7f22_pad {
+    flex: 0 0 50%
+}
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy92aWV3cy9wYWRzLmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQSwrQkFBQztBQUFEO0lBQ0ksY0FBYztJQUNkLGNBQWM7SUFDZCxlQUFnQjtDQUNuQjtBQUVEO0lBQ0ksYUFBYztDQUNqQiIsImZpbGUiOiJpbmRleC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyIucGFkcyB7XHJcbiAgICBoZWlnaHQ6IDEwMHZoO1xyXG4gICAgZGlzcGxheTogZmxleDtcclxuICAgIGZsZXgtd3JhcDogd3JhcDtcclxufVxyXG5cclxuLnBhZCB7XHJcbiAgICBmbGV4OiAwIDAgNTAlO1xyXG59Il19 */

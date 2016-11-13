@@ -1,0 +1,9 @@
+.pads {
+    height: 100vh;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.pad {
+    flex: 0 0 50%;
+}
