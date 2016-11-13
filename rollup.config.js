@@ -4,7 +4,7 @@ import nodeResolve from "rollup-plugin-node-resolve";
 import css from "modular-css/rollup";
 
 export default {
-    entry  : "./public/src/index.js",
+    entry  : "./src/index.js",
     format : "cjs",
     dest   : "./public/gen/js/index.js",
     plugins : [
