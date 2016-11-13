@@ -1366,7 +1366,7 @@ m.parseQueryString = parse;
 m.buildQueryString = build;
 m.version = "bleeding-edge";
 
-var index = m;
+var index$1 = m;
 
 var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
@@ -1390,109 +1390,51 @@ var mainloop_min = createCommonjsModule(function (module) {
 });
 
 var css = {
-    "pads": "mcf8b1ec7b_pads",
-    "pad": "mcf8b1ec7b_pad"
+    "ticker": "mc70832d4a_ticker"
+};
+
+var css$1 = {
+    "pads": "mc4dd3a996_pads",
+    "pad": "mc4dd3a996_pad"
 };
 
 const pads$$1 = [ 1, 2, 3, 4 ];
 
 var pads$1 = {
     view : () =>
-        index("section", { class : css.pads },
+        index$1("section", { class : css$1.pads },
             pads$$1.map((pad$$1) =>
-                index("button", { class : css.pad }, pad$$1)
+                index$1("button", { class : css$1.pad }, pad$$1)
             )
         )
 };
 
-let state = {
-    color  : "red",
-    acc    : 0,
-    alight : false,
-    light  : {}
+var scenes = {
+    intro : [
+        index$1(pads$1)
+    ]
 };
 
-const addLight = function() {
-        // first click
-        if(!state.light.count) {
-            state.light.count = 1;
+let state = {
+    scenes : scenes
+};
 
-            return;
-        }
+state.scene = state.scenes.intro;
 
-        state.light.count++;
-    };
-const pulseLight = function() {
-        if(state.light.lit) {
-            return;
-        }
-
-        state.light.lit = {
-            idx : 0,
-            dur : 0
-        };
-    };
-const updateLight = function(delta) {
-        let dur = 300,
-            lit = 100,
-
-            idx;
-
-        if(!state.light.count || !state.light.lit) {
-            state.alight = false;
-
-            return;
-        }
-
-        // done light queue
-        if(state.light.lit.idx >= state.light.count) {
-            delete state.light.lit;
-            state.alight = false;
-
-            return;
-        }
-
-        state.light.lit.dur += delta;
-
-        // end of light, next
-        if(state.light.lit.dur > dur) {
-            state.alight = false;
-            state.light.lit.dur = 0;
-            state.light.lit.idx++;
-
-            return;
-        }
-
-        // check if light on or off, (waiting for next)
-        if(state.light.lit.dur < lit) {
-            state.alight = true;
-        } else {
-            state.alight = false;
-        }
-
-    };
 const comp = {
         view : () => [
-            index("div", {
-                style : `background: ${state.alight ? state.color : ""}`,
-                onclick : () => {
-                    addLight();
-                    pulseLight();
-                }
-            }, state.content),
-            index(pads$1)
+            index$1("div", { class : css.ticker }, state.ticker),
+            state.scene
         ]
     };
 const update = function(delta) {
-        state.content = Math.floor(Date.now()/1000);
-
-        updateLight(delta);
+        state.ticker = Math.floor(Date.now()/1000);
     };
 const draw = function() {
-        index.redraw();
+        index$1.redraw();
     };
 
-index.mount(document.body, comp);
+index$1.mount(document.body, comp);
 
 mainloop_min.setUpdate(update).setDraw(draw).start();
 

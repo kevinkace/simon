@@ -1,94 +1,25 @@
 import m from "mithril";
 import MainLoop from "mainloop.js";
 
-import pads from "./views/pads";
+import css from "./index.css";
+
+import scenes from "./scenes";
 
 let state = {
-    color  : "red",
-    acc    : 0,
-    alight : false,
-    light  : {}
+    scenes : scenes
 };
 
-const addLight = function() {
-        // first click
-        if(!state.light.count) {
-            state.light.count = 1;
+state.scene = state.scenes.intro;
 
-            return;
-        }
-
-        state.light.count++;
-    },
-
-    pulseLight = function() {
-        if(state.light.lit) {
-            return;
-        }
-
-        state.light.lit = {
-            idx : 0,
-            dur : 0
-        };
-    },
-
-    updateLight = function(delta) {
-        let dur = 300,
-            lit = 100,
-
-            idx;
-
-        if(!state.light.count || !state.light.lit) {
-            state.alight = false;
-
-            return;
-        }
-
-        // done light queue
-        if(state.light.lit.idx >= state.light.count) {
-            delete state.light.lit;
-            state.alight = false;
-
-            return;
-        }
-
-        state.light.lit.dur += delta;
-
-        // end of light, next
-        if(state.light.lit.dur > dur) {
-            state.alight = false;
-            state.light.lit.dur = 0;
-            state.light.lit.idx++;
-
-            return;
-        }
-
-        // check if light on or off, (waiting for next)
-        if(state.light.lit.dur < lit) {
-            state.alight = true;
-        } else {
-            state.alight = false;
-        }
-
-    },
-
-    comp = {
+const comp = {
         view : () => [
-            m("div", {
-                style : `background: ${state.alight ? state.color : ""}`,
-                onclick : () => {
-                    addLight();
-                    pulseLight();
-                }
-            }, state.content),
-            m(pads)
+            m("div", { class : css.ticker }, state.ticker),
+            state.scene
         ]
     },
 
     update = function(delta) {
-        state.content = Math.floor(Date.now()/1000);
-
-        updateLight(delta);
+        state.ticker = Math.floor(Date.now()/1000);
     },
 
     draw = function() {

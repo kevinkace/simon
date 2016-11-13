@@ -1,0 +1,8 @@
+.ticker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #fff;
+    border-radius: 2px;
+    opacity: 0.8;
+}
