@@ -1487,13 +1487,10 @@ const update = function(delta) {
             state.gameState.playSteps(delta);
         }
     };
-const draw = function() {
-        index.redraw();
-    };
 
 index.mount(document.body, comp);
 
-mainloop_min.setUpdate(update).setDraw(draw).start();
+mainloop_min.setUpdate(update).setDraw(index.redraw).start();
 
 window.ML = mainloop_min;
 window.state = state;

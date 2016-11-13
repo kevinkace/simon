@@ -28,15 +28,11 @@ const comp = {
         if(state.gameState.playback) {
             state.gameState.playSteps(delta);
         }
-    },
-
-    draw = function() {
-        m.redraw();
     };
 
 m.mount(document.body, comp);
 
-MainLoop.setUpdate(update).setDraw(draw).start();
+MainLoop.setUpdate(update).setDraw(m.redraw).start();
 
 window.ML = MainLoop;
 window.state = state;
