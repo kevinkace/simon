@@ -1400,11 +1400,10 @@ var css$1 = {
     "pad_2": "mc4dd3a996_pad mc4dd3a996_pad_2",
     "pad_3": "mc4dd3a996_pad mc4dd3a996_pad_3",
     "pad_4": "mc4dd3a996_pad mc4dd3a996_pad_4",
-    "padAlight": "mc4dd3a996_pad mc4dd3a996_padAlight",
-    "padAlight_1": "mc4dd3a996_pad mc4dd3a996_padAlight mc4dd3a996_padAlight_1",
-    "padAlight_2": "mc4dd3a996_pad mc4dd3a996_padAlight mc4dd3a996_padAlight_2",
-    "padAlight_3": "mc4dd3a996_pad mc4dd3a996_padAlight mc4dd3a996_padAlight_3",
-    "padAlight_4": "mc4dd3a996_pad mc4dd3a996_padAlight mc4dd3a996_padAlight_4"
+    "padAlight_1": "mc4dd3a996_pad mc4dd3a996_padAlight_1",
+    "padAlight_2": "mc4dd3a996_pad mc4dd3a996_padAlight_2",
+    "padAlight_3": "mc4dd3a996_pad mc4dd3a996_padAlight_3",
+    "padAlight_4": "mc4dd3a996_pad mc4dd3a996_padAlight_4"
 };
 
 const pads$$1 = [ 1, 2, 3, 4 ];
