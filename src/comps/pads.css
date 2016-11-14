@@ -1,7 +1,7 @@
-@value color_1: #4bd75a;
-@value color_2: #f63218;
-@value color_3: #fff734;
-@value color_4: #009beb;
+@value color_1: #00e083;
+@value color_2: #ff1e71;
+@value color_3: #ffda24;
+@value color_4: #009fff;
 
 
 .pads {
@@ -26,6 +26,10 @@
 
 .pad:disabled {
     cursor: no-drop;
+}
+
+.pad:focus {
+    outline: none;
 }
 
 .pad_1,

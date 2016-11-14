@@ -1498,7 +1498,7 @@ GameState.prototype = {
 
     playSteps : function(delta) {
         let period = 500,
-            thresh = period / 2;
+            delay  = period / 2;
 
         // first light
         if(!this.lit) {
@@ -1507,17 +1507,17 @@ GameState.prototype = {
                 dur : 0
             };
 
-            this.alight = this.pattern[this.lit.idx];
+            // this.alight = this.pattern[this.lit.idx];
 
             return;
         }
 
         this.lit.dur += delta;
 
-        if(this.lit.dur >= thresh) {
-            this.alight = 0;
-        } else {
+        if(this.lit.dur >= delay) {
             this.alight = this.pattern[this.lit.idx];
+        } else {
+            this.alight = 0;
         }
 
         if(this.lit.dur >= period) {
@@ -1527,6 +1527,7 @@ GameState.prototype = {
             // end of lights
             if(this.lit.idx === this.pattern.length) {
                 delete this.lit;
+                this.alight = 0;
                 this.playback = false;
             }
         }
