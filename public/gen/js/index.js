@@ -1427,15 +1427,20 @@ var pads$1 = {
         return index("section", { class : css$1.pads },
             pads$$1.map((pad$$1) => {
                 let attrs = {
-                    onclick : clickPad.bind(null, state),
-                    class   : state.gameState.alight === pad$$1 ?
-                        css$1[`padAlight_${pad$$1}`] :
-                        css$1[`pad_${pad$$1}`],
+                    class        : css$1[`pad_${pad$$1}`],
                     "data-value" : pad$$1
                 };
 
-                if(state.gameState.playback) {
-                    attrs.disabled = "disabled";
+                if(state.gameState) {
+                    if(state.gameState.playback) {
+                        attrs.disabled = "disabled";
+                    }
+
+                    if(state.gameState.alight === pad$$1) {
+                        attrs.class = css$1[`padAlight_${pad$$1}`];
+                    }
+
+                    attrs.onclick = clickPad.bind(null, state);
                 }
 
                 return index("button", attrs, pad$$1);
@@ -1444,8 +1449,49 @@ var pads$1 = {
     }
 };
 
+var css$2 = {
+    "intro": "mc7695c4cc_intro"
+};
+
+var css$3 = {
+    "button": "mc0023079d_button"
+};
+
+var button$$1 = {
+    view : (vnode) =>
+        index("button",
+            Object.assign({
+                    class : css$3.button
+                },
+                vnode.attrs
+            ),
+            vnode.children
+        )
+};
+
+var intro$$1 = {
+    view : (vnode) =>
+        index("div", {
+                class : css$2.intro
+            },
+            index(button$$1, {
+                onclick : () => {
+                    vnode.attrs.state.newGame = true;
+                }
+            }, "play")
+        )
+};
+
 var scenes = {
     intro : {
+        view : (vnode) => {
+            return [
+                index(pads$1, vnode.attrs),
+                index(intro$$1, vnode.attrs)
+            ];
+        }
+    },
+    game : {
         view : (vnode) => {
             return index(pads$1, vnode.attrs);
         }
@@ -1455,7 +1501,7 @@ var scenes = {
 function GameState() {
     this.lost = false;
     this.pattern = [1];
-    this.playback = false;
+    this.playback = true;
     this.user = {
         idx : 0
     };
@@ -1535,12 +1581,10 @@ GameState.prototype = {
 };
 
 let state = {
-    scenes    : scenes,
-    gameState : new GameState()
+    scenes : scenes
 };
 
 state.scene = state.scenes.intro;
-state.gameState.playback = true;
 
 const comp = {
         view : () => [
@@ -1551,11 +1595,20 @@ const comp = {
 const update = function(delta) {
         state.ticker = Math.floor(Date.now()/1000);
 
-        if(state.gameState.newGame) {
+        if(!state.newGame && !state.gameState) {
+            return;
+        }
+
+        if(state.newGame || (state.gameState && state.gameState.newGame)) {
+            state.newGame = false;
+            state.scene = state.scenes.game;
+
             state.gameState = new GameState();
         }
 
-        state.gameState.update(delta);
+        if(state.gameState) {
+            state.gameState.update(delta);
+        }
     };
 
 index.mount(document.body, comp);

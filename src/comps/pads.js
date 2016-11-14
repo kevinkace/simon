@@ -23,15 +23,20 @@ export default {
         return m("section", { class : css.pads },
             pads.map((pad) => {
                 let attrs = {
-                    onclick : clickPad.bind(null, state),
-                    class   : state.gameState.alight === pad ?
-                        css[`padAlight_${pad}`] :
-                        css[`pad_${pad}`],
+                    class        : css[`pad_${pad}`],
                     "data-value" : pad
                 };
 
-                if(state.gameState.playback) {
-                    attrs.disabled = "disabled";
+                if(state.gameState) {
+                    if(state.gameState.playback) {
+                        attrs.disabled = "disabled";
+                    }
+
+                    if(state.gameState.alight === pad) {
+                        attrs.class = css[`padAlight_${pad}`];
+                    }
+
+                    attrs.onclick = clickPad.bind(null, state);
                 }
 
                 return m("button", attrs, pad);

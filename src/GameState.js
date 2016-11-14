@@ -1,7 +1,7 @@
 export default function GameState() {
     this.lost = false;
     this.pattern = [1];
-    this.playback = false;
+    this.playback = true;
     this.user = {
         idx : 0
     };

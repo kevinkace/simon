@@ -8,12 +8,10 @@ import scenes from "./scenes";
 import GameState from "./GameState";
 
 let state = {
-    scenes    : scenes,
-    gameState : new GameState()
+    scenes : scenes
 };
 
 state.scene = state.scenes.intro;
-state.gameState.playback = true;
 
 const comp = {
         view : () => [
@@ -25,11 +23,20 @@ const comp = {
     update = function(delta) {
         state.ticker = Math.floor(Date.now()/1000);
 
-        if(state.gameState.newGame) {
+        if(!state.newGame && !state.gameState) {
+            return;
+        }
+
+        if(state.newGame || (state.gameState && state.gameState.newGame)) {
+            state.newGame = false;
+            state.scene = state.scenes.game;
+
             state.gameState = new GameState();
         }
 
-        state.gameState.update(delta);
+        if(state.gameState) {
+            state.gameState.update(delta);
+        }
     };
 
 m.mount(document.body, comp);
