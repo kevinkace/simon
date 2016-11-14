@@ -1446,7 +1446,7 @@ var pads$1 = {
                         attrs.disabled = "disabled";
                     }
 
-                    ripples = state.gameState.ripples;
+                    ripples = state.gameState.ripples.filter((ripple$$1) => ripple$$1.pad === pad);
 
                     // if(state.gameState.alight === pad) {
                     //     attrs.class = css[`padAlight_${pad}`];
@@ -1569,6 +1569,7 @@ GameState.prototype = {
 
     userPlay : function(opts) {
         this.ripples.push({
+            pad : opts.pad,
             dur : 0,
             pos : {
                 x : opts.pos.x,

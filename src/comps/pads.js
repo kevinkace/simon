@@ -44,7 +44,7 @@ export default {
                         attrs.disabled = "disabled";
                     }
 
-                    ripples = state.gameState.ripples;
+                    ripples = state.gameState.ripples.filter((ripple) => ripple.pad === pad);
 
                     // if(state.gameState.alight === pad) {
                     //     attrs.class = css[`padAlight_${pad}`];

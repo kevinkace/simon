@@ -43,6 +43,7 @@ GameState.prototype = {
 
     userPlay : function(opts) {
         this.ripples.push({
+            pad : opts.pad,
             dur : 0,
             pos : {
                 x : opts.pos.x,
