@@ -29,7 +29,7 @@ export default {
         };
     },
     view : (vnode) => {
-        let state = vnode.attrs.state;
+        let state  = vnode.attrs.state;
 
         return m("section", { class : css.pads },
             pads.map((pad) => {
@@ -37,18 +37,18 @@ export default {
                         class        : css.button,
                         "data-value" : pad
                     },
-                    ripples = [];
+                    ripples = [],
+                    alight  = null;
 
                 if(state.gameState) {
                     if(state.gameState.playback) {
                         attrs.disabled = "disabled";
+
+                        if(state.gameState.alight === pad) {
+                            alight = m("span", { class : css.alight });
+                        }
                     }
-
                     ripples = state.gameState.ripples.filter((ripple) => ripple.pad === pad);
-
-                    // if(state.gameState.alight === pad) {
-                    //     attrs.class = css[`padAlight_${pad}`];
-                    // }
 
                     attrs.onclick = clickPad.bind(null, state, {
                         x : vnode.state.pos.x,
@@ -57,6 +57,7 @@ export default {
                 }
 
                 return m("div", { class : css[`quad_${pad}`] },
+                    alight,
                     ripples.map((ripple) => m("span", {
                         class : css.ripple,
                         style : `left: ${ripple.pos.x}px; top: ${ripple.pos.y}px;`

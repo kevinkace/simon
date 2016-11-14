@@ -1401,7 +1401,8 @@ var css$1 = {
     "quad_3": "mc4dd3a996_quad mc4dd3a996_quad_3",
     "quad_4": "mc4dd3a996_quad mc4dd3a996_quad_4",
     "button": "mc4dd3a996_button",
-    "ripple": "mcb539df3f_ripple mc4dd3a996_ripple"
+    "ripple": "mcb539df3f_ripple mc4dd3a996_ripple",
+    "alight": "mc4dd3a996_alight"
 };
 
 const pads$$1 = [ 1, 2, 3, 4 ];
@@ -1431,7 +1432,7 @@ var pads$1 = {
         };
     },
     view : (vnode) => {
-        let state = vnode.attrs.state;
+        let state  = vnode.attrs.state;
 
         return index("section", { class : css$1.pads },
             pads$$1.map((pad) => {
@@ -1439,18 +1440,18 @@ var pads$1 = {
                         class        : css$1.button,
                         "data-value" : pad
                     },
-                    ripples = [];
+                    ripples = [],
+                    alight$$1  = null;
 
                 if(state.gameState) {
                     if(state.gameState.playback) {
                         attrs.disabled = "disabled";
+
+                        if(state.gameState.alight === pad) {
+                            alight$$1 = index("span", { class : css$1.alight });
+                        }
                     }
-
                     ripples = state.gameState.ripples.filter((ripple$$1) => ripple$$1.pad === pad);
-
-                    // if(state.gameState.alight === pad) {
-                    //     attrs.class = css[`padAlight_${pad}`];
-                    // }
 
                     attrs.onclick = clickPad.bind(null, state, {
                         x : vnode.state.pos.x,
@@ -1459,6 +1460,7 @@ var pads$1 = {
                 }
 
                 return index("div", { class : css$1[`quad_${pad}`] },
+                    alight$$1,
                     ripples.map((ripple$$1) => index("span", {
                         class : css$1.ripple,
                         style : `left: ${ripple$$1.pos.x}px; top: ${ripple$$1.pos.y}px;`
