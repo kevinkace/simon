@@ -6,8 +6,37 @@
     flex-wrap: wrap;
 }
 
-.pad {
+.quad {
     flex: 0 0 50%;
+    overflow: hidden;
+
+    position: relative;
+}
+
+.quad_1 {
+    composes: quad;
+
+    background: colors.one;
+}
+.quad_2 {
+    composes: quad;
+
+    background: colors.two;
+}
+.quad_3 {
+    composes: quad;
+
+    background: colors.three;
+}
+.quad_4 {
+    composes: quad;
+
+    background: colors.four;
+}
+
+.button {
+    width: 100%;
+    height: 100%;
 
     cursor: pointer;
 
@@ -18,61 +47,21 @@
     border: none;
     -webkit-tap-highlight-color: transparent;
 
-    transition: background 0.15s;
+    background: transparent;
 
     @media (orientation: landscape) {
         font-size: 40vh;
     }
+
+    &:disabled {
+        cursor: no-drop;
+    }
+
+    &:focus {
+        outline: none;
+    }
 }
 
-.pad:disabled {
-    cursor: no-drop;
-}
-
-.pad:focus {
-    outline: none;
-}
-
-.pad_1,
-.pad_2,
-.pad_3,
-.pad_4 {
-    composes: pad;
-}
-
-.pad_1 {
-    background: colors.one;
-}
-.pad_2 {
-    background: colors.two;
-}
-.pad_3 {
-    background: colors.three;
-}
-.pad_4 {
-    background: colors.four;
-}
-
-.padAlight_1,
-.padAlight_2,
-.padAlight_3,
-.padAlight_4 {
-    composes: pad;
-}
-
-.padAlight_1,
-.pad_1:active {
-    background: color(colors.one w(80%));
-}
-.padAlight_2,
-.pad_2:active {
-    background: color(colors.two w(80%));
-}
-.padAlight_3,
-.pad_3:active {
-    background: color(colors.three w(80%));
-}
-.padAlight_4,
-.pad_4:active {
-    background: color(colors.four w(80%));
+.ripple {
+    composes: ripple from "./ripple.css";
 }

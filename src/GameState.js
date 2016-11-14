@@ -2,6 +2,7 @@ export default function GameState() {
     this.lost = false;
     this.pattern = [1];
     this.playback = true;
+    this.ripples = [];
     this.user = {
         idx : 0
     };
@@ -16,15 +17,33 @@ GameState.prototype = {
         if(this.playback) {
             this.playSteps(delta);
         }
+
+        if(this.ripples) {
+            this.updateRipples(delta);
+        }
+    },
+
+    updateRipples(delta) {
+        let dur = 800;
+
+        this.ripples = this.ripples.filter((ripple) => ripple.dur < dur);
     },
 
     addToPattern : function() {
         this.pattern.push(Math.floor(4 * Math.random()) + 1);
     },
 
-    userPlay : function(pad) {
+    userPlay : function(opts) {
+        this.ripples.push({
+            dur : 0,
+            pos : {
+                x : opts.pos.x,
+                y : opts.pos.y
+            }
+        });
+
         // clicked wrong pad
-        if(this.pattern[this.user.idx] !== pad) {
+        if(this.pattern[this.user.idx] !== opts.pad) {
             this.lost = true;
 
             return;

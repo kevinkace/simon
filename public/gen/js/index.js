@@ -1395,51 +1395,76 @@ var css = {
 
 var css$1 = {
     "pads": "mc4dd3a996_pads",
-    "pad": "mc4dd3a996_pad",
-    "pad_1": "mc4dd3a996_pad mc4dd3a996_pad_1",
-    "pad_2": "mc4dd3a996_pad mc4dd3a996_pad_2",
-    "pad_3": "mc4dd3a996_pad mc4dd3a996_pad_3",
-    "pad_4": "mc4dd3a996_pad mc4dd3a996_pad_4",
-    "padAlight_1": "mc4dd3a996_pad mc4dd3a996_padAlight_1",
-    "padAlight_2": "mc4dd3a996_pad mc4dd3a996_padAlight_2",
-    "padAlight_3": "mc4dd3a996_pad mc4dd3a996_padAlight_3",
-    "padAlight_4": "mc4dd3a996_pad mc4dd3a996_padAlight_4"
+    "quad": "mc4dd3a996_quad",
+    "quad_1": "mc4dd3a996_quad mc4dd3a996_quad_1",
+    "quad_2": "mc4dd3a996_quad mc4dd3a996_quad_2",
+    "quad_3": "mc4dd3a996_quad mc4dd3a996_quad_3",
+    "quad_4": "mc4dd3a996_quad mc4dd3a996_quad_4",
+    "button": "mc4dd3a996_button",
+    "ripple": "mcb539df3f_ripple mc4dd3a996_ripple"
 };
 
 const pads$$1 = [ 1, 2, 3, 4 ];
 
-function clickPad(state, e) {
+function clickPad(state, pos, e) {
     let value;
 
     value = e.currentTarget.getAttribute("data-value");
 
-    state.gameState.userPlay(parseInt(value, 10));
+    state.gameState.userPlay({
+        pad : parseInt(value, 10),
+        pos : {
+            x : e.pageX - pos.x,
+            y : e.pageY - pos.y
+        }
+    });
 }
 
 var pads$1 = {
+    oninit : (vnode) => {
+        vnode.state.pos = {};
+    },
+    oncreate : (vnode) => {
+        vnode.state.pos = {
+            x : vnode.dom.offsetLeft,
+            y : vnode.dom.offsetTop
+        };
+    },
     view : (vnode) => {
         let state = vnode.attrs.state;
 
         return index("section", { class : css$1.pads },
-            pads$$1.map((pad$$1) => {
+            pads$$1.map((pad) => {
                 let attrs = {
-                    class        : css$1[`pad_${pad$$1}`],
-                    "data-value" : pad$$1
-                };
+                        class        : css$1.button,
+                        "data-value" : pad
+                    },
+                    ripples = [];
 
                 if(state.gameState) {
                     if(state.gameState.playback) {
                         attrs.disabled = "disabled";
                     }
 
-                    if(state.gameState.alight === pad$$1) {
-                        attrs.class = css$1[`padAlight_${pad$$1}`];
-                    }
+                    ripples = state.gameState.ripples;
 
-                    attrs.onclick = clickPad.bind(null, state);
+                    // if(state.gameState.alight === pad) {
+                    //     attrs.class = css[`padAlight_${pad}`];
+                    // }
+
+                    attrs.onclick = clickPad.bind(null, state, {
+                        x : vnode.state.pos.x,
+                        y : vnode.state.pos.y
+                    });
                 }
 
-                return index("button", attrs, pad$$1);
+                return index("div", { class : css$1[`quad_${pad}`] },
+                    ripples.map((ripple$$1) => index("span", {
+                        class : css$1.ripple,
+                        style : `left: ${ripple$$1.pos.x}px; top: ${ripple$$1.pos.y}px;`
+                    })),
+                    index("button", attrs, pad)
+                );
             })
         )
     }
@@ -1453,7 +1478,7 @@ var css$3 = {
     "button": "mc0023079d_button"
 };
 
-var button$$1 = {
+var button$1 = {
     view : (vnode) => {
             return index("button",
                 Object.assign({
@@ -1472,7 +1497,7 @@ var intro$$1 = {
         index("div", {
                 class : css$2.intro
             },
-            index(button$$1, {
+            index(button$1, {
                 attrs : {
                     onclick : () => {
                         vnode.attrs.state.newGame = true;
@@ -1503,6 +1528,7 @@ function GameState() {
     this.lost = false;
     this.pattern = [1];
     this.playback = true;
+    this.ripples = [];
     this.user = {
         idx : 0
     };
@@ -1517,15 +1543,33 @@ GameState.prototype = {
         if(this.playback) {
             this.playSteps(delta);
         }
+
+        if(this.ripples) {
+            this.updateRipples(delta);
+        }
+    },
+
+    updateRipples(delta) {
+        let dur = 800;
+
+        this.ripples = this.ripples.filter((ripple) => ripple.dur < dur);
     },
 
     addToPattern : function() {
         this.pattern.push(Math.floor(4 * Math.random()) + 1);
     },
 
-    userPlay : function(pad) {
+    userPlay : function(opts) {
+        this.ripples.push({
+            dur : 0,
+            pos : {
+                x : opts.pos.x,
+                y : opts.pos.y
+            }
+        });
+
         // clicked wrong pad
-        if(this.pattern[this.user.idx] !== pad) {
+        if(this.pattern[this.user.idx] !== opts.pad) {
             this.lost = true;
 
             return;
