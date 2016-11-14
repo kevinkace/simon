@@ -21,12 +21,12 @@ export default {
         let state = vnode.attrs.state;
 
         return m("section", { class : css.pads },
-            pads.map((pad, idx) => {
+            pads.map((pad) => {
                 let attrs = {
                     onclick : clickPad.bind(null, state),
-                    class   : state.gameState.alight === (idx + 1) ?
-                        css.padAlight :
-                        css.pad,
+                    class   : state.gameState.alight === pad ?
+                        css[`padAlight_${pad}`] :
+                        css[`pad_${pad}`],
                     "data-value" : pad
                 };
 

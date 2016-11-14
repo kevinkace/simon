@@ -43,8 +43,8 @@ GameState.prototype = {
     },
 
     playSteps : function(delta) {
-        let period = 400,
-            thresh = period / 3;
+        let period = 500,
+            thresh = period / 2;
 
         // first light
         if(!this.lit) {

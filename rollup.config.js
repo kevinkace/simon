@@ -3,6 +3,8 @@ import commonjs from "rollup-plugin-commonjs";
 import nodeResolve from "rollup-plugin-node-resolve";
 import css from "modular-css/rollup";
 
+import colorFunction from "postcss-color-function";
+
 export default {
     entry  : "./src/index.js",
     format : "cjs",
@@ -34,7 +36,8 @@ export default {
           // namedExports: { "./module.js": ["foo", "bar" ] }  // Default: undefined
         }),
         css({
-            css : "./public/gen/css/index.css"
+            css   : "./public/gen/css/index.css",
+            after : colorFunction
         })
     ]
 };

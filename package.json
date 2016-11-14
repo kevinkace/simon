@@ -16,6 +16,8 @@
     "mainloop.js": "^1.0.3",
     "mithril": "git+https://github.com/lhorie/mithril.js.git#rewrite",
     "modular-css": "^0.29.0",
+    "postcss": "^5.2.5",
+    "postcss-color-function": "^2.0.1",
     "rollup": "^0.36.3",
     "rollup-plugin-commonjs": "^5.0.5",
     "rollup-plugin-node-resolve": "^2.0.0",

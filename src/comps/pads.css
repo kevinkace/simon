@@ -1,3 +1,9 @@
+@value color_1: #4bd75a;
+@value color_2: #f63218;
+@value color_3: #fff734;
+@value color_4: #009beb;
+
+
 .pads {
     height: 100vh;
     display: flex;
@@ -6,10 +12,55 @@
 
 .pad {
     flex: 0 0 50%;
+    border: none;
+
+    transition: background 0.1s;
+}
+
+.pad_1,
+.pad_2,
+.pad_3,
+.pad_4 {
+    composes: pad;
+}
+
+.pad_1 {
+    background: color_1;
+}
+.pad_2 {
+    background: color_2;
+}
+.pad_3 {
+    background: color_3;
+}
+.pad_4 {
+    background: color_4;
 }
 
 .padAlight {
     composes: pad;
+}
 
-    background: red;
+.padAlight_1,
+.padAlight_2,
+.padAlight_3,
+.padAlight_4 {
+    composes: padAlight;
+}
+
+.padAlight_1,
+.pad_1:active {
+    background: color(color_1 w(80%));
+}
+.padAlight_2,
+.pad_2:active {
+    background: color(color_2 w(80%));
+}
+.padAlight_3,
+.pad_3:active {
+    background: color(color_3 w(80%));
+}
+.padAlight_4,
+.pad_4:active {
+    background: color(color_4 w(80%));
 }

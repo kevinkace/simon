@@ -1396,7 +1396,15 @@ var css = {
 var css$1 = {
     "pads": "mc4dd3a996_pads",
     "pad": "mc4dd3a996_pad",
-    "padAlight": "mc4dd3a996_pad mc4dd3a996_padAlight"
+    "pad_1": "mc4dd3a996_pad mc4dd3a996_pad_1",
+    "pad_2": "mc4dd3a996_pad mc4dd3a996_pad_2",
+    "pad_3": "mc4dd3a996_pad mc4dd3a996_pad_3",
+    "pad_4": "mc4dd3a996_pad mc4dd3a996_pad_4",
+    "padAlight": "mc4dd3a996_pad mc4dd3a996_padAlight",
+    "padAlight_1": "mc4dd3a996_pad mc4dd3a996_padAlight mc4dd3a996_padAlight_1",
+    "padAlight_2": "mc4dd3a996_pad mc4dd3a996_padAlight mc4dd3a996_padAlight_2",
+    "padAlight_3": "mc4dd3a996_pad mc4dd3a996_padAlight mc4dd3a996_padAlight_3",
+    "padAlight_4": "mc4dd3a996_pad mc4dd3a996_padAlight mc4dd3a996_padAlight_4"
 };
 
 const pads$$1 = [ 1, 2, 3, 4 ];
@@ -1418,12 +1426,12 @@ var pads$1 = {
         let state = vnode.attrs.state;
 
         return index("section", { class : css$1.pads },
-            pads$$1.map((pad$$1, idx) => {
+            pads$$1.map((pad$$1) => {
                 let attrs = {
                     onclick : clickPad.bind(null, state),
-                    class   : state.gameState.alight === (idx + 1) ?
-                        css$1.padAlight :
-                        css$1.pad,
+                    class   : state.gameState.alight === pad$$1 ?
+                        css$1[`padAlight_${pad$$1}`] :
+                        css$1[`pad_${pad$$1}`],
                     "data-value" : pad$$1
                 };
 
@@ -1490,8 +1498,8 @@ GameState.prototype = {
     },
 
     playSteps : function(delta) {
-        let period = 400,
-            thresh = period / 3;
+        let period = 500,
+            thresh = period / 2;
 
         // first light
         if(!this.lit) {
