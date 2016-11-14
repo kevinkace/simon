@@ -1,4 +1,4 @@
-import m from "mithril";
+    import m from "mithril";
 
 import css from "./intro.css";
 
@@ -10,9 +10,12 @@ export default {
                 class : css.intro
             },
             m(button, {
-                onclick : () => {
-                    vnode.attrs.state.newGame = true;
-                }
-            }, "play")
+                attrs : {
+                    onclick : () => {
+                        vnode.attrs.state.newGame = true;
+                    }
+                },
+                text : "play"
+            })
         )
 };

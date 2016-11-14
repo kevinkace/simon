@@ -1,6 +1,112 @@
-.button {
-    border-radius: 0.3em;
-    background: #fff;
+@value * as colors from "../colors.css";
 
-    color: red;
+.button {
+    padding: 0.5em 0.7em 0.7em;
+
+    color: colors.two;
+    font-size: 3em;
+    line-height: 1;
+
+    cursor: pointer;
+
+    border: none;
+    border-radius: 0.2em;
+    background: #fff;
+    box-shadow: 2px 2px 2px color(#000 a(30%));
+
+    i {
+        font-style: normal;
+    }
+
+    &:focus {
+
+            outline: none;
+    }
+
+    &:hover i,
+    &:focus i {
+
+        animation: letter1 0.6s infinite;
+
+        &:nth-child(4n + 1) {
+            animation: letter2 0.6s infinite;
+        }
+
+        &:nth-child(4n + 2) {
+            animation: letter3 0.6s infinite;
+        }
+
+        &:nth-child(4n + 3) {
+            animation: letter4 0.6s infinite;
+        }
+    }
+}
+
+@keyframes letter4 {
+    0% {
+        color: colors.two;
+    }
+    25% {
+        color: colors.one;
+    }
+    50% {
+        color: colors.four;
+    }
+    75% {
+        color: colors.three;
+    }
+    100% {
+        color: colors.two;
+    }
+}
+@keyframes letter3 {
+    0% {
+        color: colors.one;
+    }
+    25% {
+        color: colors.four;
+    }
+    50% {
+        color: colors.three;
+    }
+    75% {
+        color: colors.two;
+    }
+    100% {
+        color: colors.one;
+    }
+}
+@keyframes letter2 {
+    0% {
+        color: colors.four;
+    }
+    25% {
+        color: colors.three;
+    }
+    50% {
+        color: colors.two;
+    }
+    75% {
+        color: colors.one;
+    }
+    100% {
+        color: colors.four;
+    }
+}
+@keyframes letter1 {
+    0% {
+        color: colors.three;
+    }
+    25% {
+        color: colors.two;
+    }
+    50% {
+        color: colors.one;
+    }
+    75% {
+        color: colors.four;
+    }
+    100% {
+        color: colors.three;
+    }
 }

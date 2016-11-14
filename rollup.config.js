@@ -4,6 +4,7 @@ import nodeResolve from "rollup-plugin-node-resolve";
 import css from "modular-css/rollup";
 
 import colorFunction from "postcss-color-function";
+import nested from "postcss-nested";
 
 export default {
     entry  : "./src/index.js",
@@ -15,29 +16,14 @@ export default {
           extensions : [ ".js", ".json" ]
         }),
 
-        commonjs({
-          // non-CommonJS modules will be ignored, but you can also
-          // specifically include/exclude files
-          // include: "node_modules/**",  // Default: undefined
-          // exclude: [ "node_modules/foo/**", "node_modules/bar/**" ],  // Default: undefined
+        commonjs(),
 
-          // search for files other than .js files (must already
-          // be transpiled by a previous plugin!)
-          // extensions: [ ".js" ],  // Default: [ ".js" ]
-
-          // if true then uses of `global` won"t be dealt with by this plugin
-          // ignoreGlobal: false,  // Default: false
-
-          // if false then skip sourceMap generation for CommonJS modules
-          // sourceMap: false,  // Default: true
-
-          // explicitly specify unresolvable named exports
-          // (see below for more details)
-          // namedExports: { "./module.js": ["foo", "bar" ] }  // Default: undefined
-        }),
         css({
             css   : "./public/gen/css/index.css",
-            after : colorFunction
+            after : [
+              colorFunction,
+              nested
+            ]
         })
     ]
 };

@@ -1458,15 +1458,17 @@ var css$3 = {
 };
 
 var button$$1 = {
-    view : (vnode) =>
-        index("button",
-            Object.assign({
-                    class : css$3.button
-                },
-                vnode.attrs
-            ),
-            vnode.children
-        )
+    view : (vnode) => {
+            return index("button",
+                Object.assign({
+                        class : css$3.button
+                    },
+                    vnode.attrs.attrs
+                ),
+                vnode.attrs.text
+                    .split("")
+                    .map((letter) => index("i", letter))
+            )}
 };
 
 var intro$$1 = {
@@ -1475,10 +1477,13 @@ var intro$$1 = {
                 class : css$2.intro
             },
             index(button$$1, {
-                onclick : () => {
-                    vnode.attrs.state.newGame = true;
-                }
-            }, "play")
+                attrs : {
+                    onclick : () => {
+                        vnode.attrs.state.newGame = true;
+                    }
+                },
+                text : "play"
+            })
         )
 };
 
