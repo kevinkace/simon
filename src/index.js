@@ -25,6 +25,10 @@ const comp = {
     update = function(delta) {
         state.ticker = Math.floor(Date.now()/1000);
 
+        if(state.gameState.newGame) {
+            state.gameState = new GameState();
+        }
+
         state.gameState.update(delta);
     };
 

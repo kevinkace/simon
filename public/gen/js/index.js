@@ -1460,6 +1460,10 @@ GameState.prototype = {
         if(this.playback) {
             this.playSteps(delta);
         }
+
+        if(this.lost) {
+            this.newGame = confirm("you lost");
+        }
     },
 
     addToPattern : function() {
@@ -1467,6 +1471,7 @@ GameState.prototype = {
     },
 
     userPlay : function(pad) {
+        // clicked wrong pad
         if(this.pattern[this.user.idx] !== pad) {
             this.lost = true;
 
@@ -1475,9 +1480,13 @@ GameState.prototype = {
 
         this.user.idx++;
 
-        this.addToPattern();
+        // user turn over
+        if(this.user.idx === this.pattern.length) {
+            this.addToPattern();
 
-        this.playback = true;
+            this.user.idx = 0;
+            this.playback = true;
+        }
     },
 
     playSteps : function(delta) {
@@ -1533,6 +1542,10 @@ const comp = {
     };
 const update = function(delta) {
         state.ticker = Math.floor(Date.now()/1000);
+
+        if(state.gameState.newGame) {
+            state.gameState = new GameState();
+        }
 
         state.gameState.update(delta);
     };
