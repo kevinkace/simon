@@ -1544,7 +1544,7 @@ GameState.prototype = {
             this.playSteps(delta);
         }
 
-        if(this.ripples) {
+        if(this.ripples.length) {
             this.updateRipples(delta);
         }
     },
@@ -1552,7 +1552,15 @@ GameState.prototype = {
     updateRipples(delta) {
         let dur = 800;
 
-        this.ripples = this.ripples.filter((ripple) => ripple.dur < dur);
+        this.ripples = this.ripples.filter((ripple) => {
+                return ripple.dur < dur;
+            })
+            .map((ripple) => {
+
+                ripple.dur += delta;
+
+                return ripple;
+            });
     },
 
     addToPattern : function() {
