@@ -1401,12 +1401,38 @@ var css$1 = {
 
 const pads$$1 = [ 1, 2, 3, 4 ];
 
+function clickPad(state, e) {
+    let value;
+
+    if(state.gameState.playback) {
+        return;
+    }
+
+    value = e.currentTarget.getAttribute("data-value");
+
+    state.gameState.userPlay(parseInt(value, 10));
+}
+
 var pads$1 = {
     view : (vnode) => {
+        let state = vnode.attrs.state;
+
         return index("section", { class : css$1.pads },
-            pads$$1.map((pad$$1, idx) =>
-                index("button", { class : vnode.attrs.state.gameState.alight === (idx + 1) ? css$1.padAlight : css$1.pad }, pad$$1)
-            )
+            pads$$1.map((pad$$1, idx) => {
+                let attrs = {
+                    onclick : clickPad.bind(null, state),
+                    class   : state.gameState.alight === (idx + 1) ?
+                        css$1.padAlight :
+                        css$1.pad,
+                    "data-value" : pad$$1
+                };
+
+                if(state.gameState.playback) {
+                    attrs.disabled = "disabled";
+                }
+
+                return index("button", attrs, pad$$1);
+            })
         )
     }
 };
@@ -1420,18 +1446,43 @@ var scenes = {
 };
 
 function GameState() {
+    this.lost = false;
     this.pattern = [1];
     this.playback = false;
+    this.user = {
+        idx : 0
+    };
 }
 
 GameState.prototype = {
+
+    update : function(delta) {
+        if(this.playback) {
+            this.playSteps(delta);
+        }
+    },
+
     addToPattern : function() {
         this.pattern.push(Math.floor(4 * Math.random()) + 1);
     },
 
+    userPlay : function(pad) {
+        if(this.pattern[this.user.idx] !== pad) {
+            this.lost = true;
+
+            return;
+        }
+
+        this.user.idx++;
+
+        this.addToPattern();
+
+        this.playback = true;
+    },
+
     playSteps : function(delta) {
         let period = 400,
-            thresh = 150;
+            thresh = period / 3;
 
         // first light
         if(!this.lit) {
@@ -1483,9 +1534,7 @@ const comp = {
 const update = function(delta) {
         state.ticker = Math.floor(Date.now()/1000);
 
-        if(state.gameState.playback) {
-            state.gameState.playSteps(delta);
-        }
+        state.gameState.update(delta);
     };
 
 index.mount(document.body, comp);

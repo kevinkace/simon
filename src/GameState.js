@@ -1,16 +1,41 @@
 export default function GameState() {
+    this.lost = false;
     this.pattern = [1];
     this.playback = false;
+    this.user = {
+        idx : 0
+    };
 };
 
 GameState.prototype = {
+
+    update : function(delta) {
+        if(this.playback) {
+            this.playSteps(delta);
+        }
+    },
+
     addToPattern : function() {
         this.pattern.push(Math.floor(4 * Math.random()) + 1);
     },
 
+    userPlay : function(pad) {
+        if(this.pattern[this.user.idx] !== pad) {
+            this.lost = true;
+
+            return;
+        }
+
+        this.user.idx++;
+
+        this.addToPattern();
+
+        this.playback = true;
+    },
+
     playSteps : function(delta) {
         let period = 400,
-            thresh = 150;
+            thresh = period / 3;
 
         // first light
         if(!this.lit) {
