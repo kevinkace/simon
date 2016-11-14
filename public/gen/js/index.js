@@ -1513,14 +1513,13 @@ function GameState() {
 }
 
 GameState.prototype = {
-
     update : function(delta) {
-        if(this.playback) {
-            this.playSteps(delta);
-        }
-
         if(this.lost) {
             this.newGame = confirm("you lost");
+        }
+
+        if(this.playback) {
+            this.playSteps(delta);
         }
     },
 
@@ -1548,18 +1547,23 @@ GameState.prototype = {
     },
 
     playSteps : function(delta) {
-        let period = 500,
+        let period = 300,
             delay  = period / 2;
 
         // first light
         if(!this.lit) {
             this.lit = {
                 idx : 0,
-                dur : 0
+                dur : 0,
+                del : 300
             };
 
-            // this.alight = this.pattern[this.lit.idx];
+            return;
+        }
 
+        this.lit.del -= delta;
+
+        if(this.lit.del > 0) {
             return;
         }
 
@@ -1622,3 +1626,13 @@ mainloop_min.setUpdate(update).setDraw(index.redraw).start();
 
 window.ML = mainloop_min;
 window.state = state;
+
+// Stop/start processing with focus
+// performance without profiling :metal:
+window.addEventListener("blur", () => {
+    mainloop_min.stop();
+});
+
+window.addEventListener("focus", () => {
+    mainloop_min.start();
+});

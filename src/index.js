@@ -45,3 +45,13 @@ MainLoop.setUpdate(update).setDraw(m.redraw).start();
 
 window.ML = MainLoop;
 window.state = state;
+
+// Stop/start processing with focus
+// performance without profiling :metal:
+window.addEventListener("blur", () => {
+    MainLoop.stop();
+})
+
+window.addEventListener("focus", () => {
+    MainLoop.start();
+})
