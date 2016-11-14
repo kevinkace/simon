@@ -1407,41 +1407,32 @@ var css$1 = {
 
 const pads$$1 = [ 1, 2, 3, 4 ];
 
-function clickPad(state, pos, e) {
-    let value;
-
-    value = e.currentTarget.getAttribute("data-value");
+function clickPad(state, e) {
+    let value = e.currentTarget.getAttribute("data-value"),
+        rect  = e.currentTarget.getBoundingClientRect();
 
     state.gameState.userPlay({
         pad : parseInt(value, 10),
         pos : {
-            x : e.pageX - pos.x,
-            y : e.pageY - pos.y
+            x : e.pageX - rect.left,
+            y : e.pageY - rect.top
         }
     });
 }
 
 var pads$1 = {
-    oninit : (vnode) => {
-        vnode.state.pos = {};
-    },
-    oncreate : (vnode) => {
-        vnode.state.pos = {
-            x : vnode.dom.offsetLeft,
-            y : vnode.dom.offsetTop
-        };
-    },
     view : (vnode) => {
         let state  = vnode.attrs.state;
 
         return index("section", { class : css$1.pads },
             pads$$1.map((pad) => {
-                let attrs = {
+                let ripples = [],
+                    alight$$1  = null,
+                    attrs   = {
                         class        : css$1.button,
-                        "data-value" : pad
-                    },
-                    ripples = [],
-                    alight$$1  = null;
+                        "data-value" : pad,
+                        onclick      : (e) => e.preventDefault()
+                    };
 
                 if(state.gameState) {
                     if(state.gameState.playback) {
@@ -1451,12 +1442,10 @@ var pads$1 = {
                             alight$$1 = index("span", { class : css$1.alight });
                         }
                     }
+
                     ripples = state.gameState.ripples.filter((ripple$$1) => ripple$$1.pad === pad);
 
-                    attrs.onclick = clickPad.bind(null, state, {
-                        x : vnode.state.pos.x,
-                        y : vnode.state.pos.y
-                    });
+                    attrs.onclick = clickPad.bind(null, state);
                 }
 
                 return index("div", { class : css$1[`quad_${pad}`] },
@@ -1680,10 +1669,10 @@ window.state = state;
 
 // Stop/start processing with focus
 // performance without profiling :metal:
-window.addEventListener("blur", () => {
-    mainloop_min.stop();
-});
+// window.addEventListener("blur", () => {
+//     MainLoop.stop();
+// })
 
-window.addEventListener("focus", () => {
-    mainloop_min.start();
-});
+// window.addEventListener("focus", () => {
+//     MainLoop.start();
+// })

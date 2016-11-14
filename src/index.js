@@ -48,10 +48,10 @@ window.state = state;
 
 // Stop/start processing with focus
 // performance without profiling :metal:
-window.addEventListener("blur", () => {
-    MainLoop.stop();
-})
+// window.addEventListener("blur", () => {
+//     MainLoop.stop();
+// })
 
-window.addEventListener("focus", () => {
-    MainLoop.start();
-})
+// window.addEventListener("focus", () => {
+//     MainLoop.start();
+// })

@@ -4,41 +4,32 @@ import css from "./pads.css";
 
 const pads = [ 1, 2, 3, 4 ];
 
-function clickPad(state, pos, e) {
-    let value;
-
-    value = e.currentTarget.getAttribute("data-value");
+function clickPad(state, e) {
+    let value = e.currentTarget.getAttribute("data-value"),
+        rect  = e.currentTarget.getBoundingClientRect();
 
     state.gameState.userPlay({
         pad : parseInt(value, 10),
         pos : {
-            x : e.pageX - pos.x,
-            y : e.pageY - pos.y
+            x : e.pageX - rect.left,
+            y : e.pageY - rect.top
         }
     });
 }
 
 export default {
-    oninit : (vnode) => {
-        vnode.state.pos = {};
-    },
-    oncreate : (vnode) => {
-        vnode.state.pos = {
-            x : vnode.dom.offsetLeft,
-            y : vnode.dom.offsetTop
-        };
-    },
     view : (vnode) => {
         let state  = vnode.attrs.state;
 
         return m("section", { class : css.pads },
             pads.map((pad) => {
-                let attrs = {
+                let ripples = [],
+                    alight  = null,
+                    attrs   = {
                         class        : css.button,
-                        "data-value" : pad
-                    },
-                    ripples = [],
-                    alight  = null;
+                        "data-value" : pad,
+                        onclick      : (e) => e.preventDefault()
+                    };
 
                 if(state.gameState) {
                     if(state.gameState.playback) {
@@ -48,12 +39,10 @@ export default {
                             alight = m("span", { class : css.alight });
                         }
                     }
+
                     ripples = state.gameState.ripples.filter((ripple) => ripple.pad === pad);
 
-                    attrs.onclick = clickPad.bind(null, state, {
-                        x : vnode.state.pos.x,
-                        y : vnode.state.pos.y
-                    });
+                    attrs.onclick = clickPad.bind(null, state);
                 }
 
                 return m("div", { class : css[`quad_${pad}`] },
