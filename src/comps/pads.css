@@ -1,8 +1,4 @@
-@value color_1: #00e083;
-@value color_2: #ff1e71;
-@value color_3: #ffda24;
-@value color_4: #009fff;
-
+@value * as colors from "../colors.css";
 
 .pads {
     height: 100vh;
@@ -40,16 +36,16 @@
 }
 
 .pad_1 {
-    background: color_1;
+    background: colors.one;
 }
 .pad_2 {
-    background: color_2;
+    background: colors.two;
 }
 .pad_3 {
-    background: color_3;
+    background: colors.three;
 }
 .pad_4 {
-    background: color_4;
+    background: colors.four;
 }
 
 .padAlight_1,
@@ -61,17 +57,17 @@
 
 .padAlight_1,
 .pad_1:active {
-    background: color(color_1 w(80%));
+    background: color(colors.one w(80%));
 }
 .padAlight_2,
 .pad_2:active {
-    background: color(color_2 w(80%));
+    background: color(colors.two w(80%));
 }
 .padAlight_3,
 .pad_3:active {
-    background: color(color_3 w(80%));
+    background: color(colors.three w(80%));
 }
 .padAlight_4,
 .pad_4:active {
-    background: color(color_4 w(80%));
+    background: color(colors.four w(80%));
 }
