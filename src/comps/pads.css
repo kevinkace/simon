@@ -12,13 +12,17 @@
     cursor: pointer;
 
     color: #fff;
-    font-size: 5em;
+    font-size: 40vw;
     text-shadow: 0 0 1px #000, 2px 2px 2px color(#000 a(40%));
 
     border: none;
     -webkit-tap-highlight-color: transparent;
 
     transition: background 0.15s;
+
+    @media (orientation: landscape) {
+        font-size: 40vh;
+    }
 }
 
 .pad:disabled {

@@ -7,10 +7,6 @@ const pads = [ 1, 2, 3, 4 ];
 function clickPad(state, e) {
     let value;
 
-    if(state.gameState.playback) {
-        return;
-    }
-
     value = e.currentTarget.getAttribute("data-value");
 
     state.gameState.userPlay(parseInt(value, 10));
