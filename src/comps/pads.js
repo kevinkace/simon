@@ -6,20 +6,52 @@ const pads = [ 1, 2, 3, 4 ];
 
 function clickPad(state, e) {
     let value = e.currentTarget.getAttribute("data-value"),
-        rect  = e.currentTarget.getBoundingClientRect();
+        rect  = e.currentTarget.getBoundingClientRect(),
+        pad   = parseInt(value, 10);
 
-    state.gameState.userPlay({
-        pad : parseInt(value, 10),
-        pos : {
-            x : e.pageX - rect.left,
-            y : e.pageY - rect.top
-        }
+    state.gameState.userPlay(pad);
+
+    ripple(state, {
+        pad : pad,
+        x   : e.pageX - rect.left,
+        y   : e.pageY - rect.top
     });
 }
+
+
+function update(delta) {
+    let dur = 800;
+
+    state.ui.ripples = state.ui.ripples.filter((ripple) => {
+            return ripple.dur < dur;
+        })
+        .map((ripple) => {
+
+            ripple.dur += delta;
+
+            return ripple;
+        });
+}
+
+function ripple(state, opts) {
+    // add to state.ui.ripple
+    state.ui.ripples.push({
+            pad : opts.pad,
+            dur : 0,
+            x   : opts.x,
+            y   : opts.y
+        });
+
+    state.ui.update = update;
+
+}
+
 
 export default {
     view : (vnode) => {
         let state  = vnode.attrs.state;
+
+        state.ui.ripples = state.ui.ripples || [];
 
         return m("section", { class : css.pads },
             pads.map((pad) => {
@@ -40,7 +72,7 @@ export default {
                         }
                     }
 
-                    ripples = state.gameState.ripples.filter((ripple) => ripple.pad === pad);
+                    ripples = state.ui.ripples.filter((ripple) => ripple.pad === pad);
 
                     attrs.onclick = clickPad.bind(null, state);
                 }
@@ -49,7 +81,7 @@ export default {
                     alight,
                     ripples.map((ripple) => m("span", {
                         class : css.ripple,
-                        style : `left: ${ripple.pos.x}px; top: ${ripple.pos.y}px;`
+                        style : `left: ${ripple.x}px; top: ${ripple.y}px;`
                     })),
                     m("button", attrs, pad)
                 );

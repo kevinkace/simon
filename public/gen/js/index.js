@@ -1409,20 +1409,52 @@ const pads$$1 = [ 1, 2, 3, 4 ];
 
 function clickPad(state, e) {
     let value = e.currentTarget.getAttribute("data-value"),
-        rect  = e.currentTarget.getBoundingClientRect();
+        rect  = e.currentTarget.getBoundingClientRect(),
+        pad   = parseInt(value, 10);
 
-    state.gameState.userPlay({
-        pad : parseInt(value, 10),
-        pos : {
-            x : e.pageX - rect.left,
-            y : e.pageY - rect.top
-        }
+    state.gameState.userPlay(pad);
+
+    ripple$$1(state, {
+        pad : pad,
+        x   : e.pageX - rect.left,
+        y   : e.pageY - rect.top
     });
 }
+
+
+function update$1(delta) {
+    let dur = 800;
+
+    state.ui.ripples = state.ui.ripples.filter((ripple$$1) => {
+            return ripple$$1.dur < dur;
+        })
+        .map((ripple$$1) => {
+
+            ripple$$1.dur += delta;
+
+            return ripple$$1;
+        });
+}
+
+function ripple$$1(state, opts) {
+    // add to state.ui.ripple
+    state.ui.ripples.push({
+            pad : opts.pad,
+            dur : 0,
+            x   : opts.x,
+            y   : opts.y
+        });
+
+    state.ui.update = update$1;
+
+}
+
 
 var pads$1 = {
     view : (vnode) => {
         let state  = vnode.attrs.state;
+
+        state.ui.ripples = state.ui.ripples || [];
 
         return index("section", { class : css$1.pads },
             pads$$1.map((pad) => {
@@ -1443,7 +1475,7 @@ var pads$1 = {
                         }
                     }
 
-                    ripples = state.gameState.ripples.filter((ripple$$1) => ripple$$1.pad === pad);
+                    ripples = state.ui.ripples.filter((ripple$$1) => ripple$$1.pad === pad);
 
                     attrs.onclick = clickPad.bind(null, state);
                 }
@@ -1452,7 +1484,7 @@ var pads$1 = {
                     alight$$1,
                     ripples.map((ripple$$1) => index("span", {
                         class : css$1.ripple,
-                        style : `left: ${ripple$$1.pos.x}px; top: ${ripple$$1.pos.y}px;`
+                        style : `left: ${ripple$$1.x}px; top: ${ripple$$1.y}px;`
                     })),
                     index("button", attrs, pad)
                 );
@@ -1519,7 +1551,7 @@ function GameState() {
     this.lost = false;
     this.pattern = [1];
     this.playback = true;
-    this.ripples = [];
+    // this.ripples = [];
     this.user = {
         idx : 0
     };
@@ -1534,42 +1566,15 @@ GameState.prototype = {
         if(this.playback) {
             this.playSteps(delta);
         }
-
-        if(this.ripples.length) {
-            this.updateRipples(delta);
-        }
-    },
-
-    updateRipples(delta) {
-        let dur = 800;
-
-        this.ripples = this.ripples.filter((ripple) => {
-                return ripple.dur < dur;
-            })
-            .map((ripple) => {
-
-                ripple.dur += delta;
-
-                return ripple;
-            });
     },
 
     addToPattern : function() {
         this.pattern.push(Math.floor(4 * Math.random()) + 1);
     },
 
-    userPlay : function(opts) {
-        this.ripples.push({
-            pad : opts.pad,
-            dur : 0,
-            pos : {
-                x : opts.pos.x,
-                y : opts.pos.y
-            }
-        });
-
+    userPlay : function(pad) {
         // clicked wrong pad
-        if(this.pattern[this.user.idx] !== opts.pad) {
+        if(this.pattern[this.user.idx] !== pad) {
             this.lost = true;
 
             return;
@@ -1629,35 +1634,40 @@ GameState.prototype = {
     }
 };
 
-let state = {
-    scenes : scenes
+let state$1 = {
+    scenes : scenes,
+    ui     : {
+        update : () => null
+    }
 };
 
-state.scene = state.scenes.intro;
+state$1.scene = state$1.scenes.intro;
 
 const comp = {
         view : () => [
-            index("div", { class : css.ticker }, state.ticker),
-            index(state.scene, { state : state })
+            index("div", { class : css.ticker }, state$1.ticker),
+            index(state$1.scene, { state : state$1 })
         ]
     };
 const update = function(delta) {
-        state.ticker = Math.floor(Date.now()/1000);
+        state$1.ticker = Math.floor(Date.now()/1000);
 
-        if(!state.newGame && !state.gameState) {
+        if(!state$1.newGame && !state$1.gameState) {
             return;
         }
 
-        if(state.newGame || (state.gameState && state.gameState.newGame)) {
-            state.newGame = false;
-            state.scene = state.scenes.game;
+        if(state$1.newGame || (state$1.gameState && state$1.gameState.newGame)) {
+            state$1.newGame = false;
+            state$1.scene = state$1.scenes.game;
 
-            state.gameState = new GameState();
+            state$1.gameState = new GameState();
         }
 
-        if(state.gameState) {
-            state.gameState.update(delta);
+        if(state$1.gameState) {
+            state$1.gameState.update(delta);
         }
+
+        state$1.ui.update(delta);
     };
 
 index.mount(document.body, comp);
@@ -1665,7 +1675,7 @@ index.mount(document.body, comp);
 mainloop_min.setUpdate(update).setDraw(index.redraw).start();
 
 window.ML = mainloop_min;
-window.state = state;
+window.state = state$1;
 
 // Stop/start processing with focus
 // performance without profiling :metal:

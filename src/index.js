@@ -8,7 +8,10 @@ import scenes from "./scenes";
 import GameState from "./GameState";
 
 let state = {
-    scenes : scenes
+    scenes : scenes,
+    ui     : {
+        update : () => null
+    }
 };
 
 state.scene = state.scenes.intro;
@@ -37,6 +40,8 @@ const comp = {
         if(state.gameState) {
             state.gameState.update(delta);
         }
+
+        state.ui.update(delta);
     };
 
 m.mount(document.body, comp);

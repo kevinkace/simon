@@ -2,7 +2,7 @@ export default function GameState() {
     this.lost = false;
     this.pattern = [1];
     this.playback = true;
-    this.ripples = [];
+    // this.ripples = [];
     this.user = {
         idx : 0
     };
@@ -17,42 +17,15 @@ GameState.prototype = {
         if(this.playback) {
             this.playSteps(delta);
         }
-
-        if(this.ripples.length) {
-            this.updateRipples(delta);
-        }
-    },
-
-    updateRipples(delta) {
-        let dur = 800;
-
-        this.ripples = this.ripples.filter((ripple) => {
-                return ripple.dur < dur;
-            })
-            .map((ripple) => {
-
-                ripple.dur += delta;
-
-                return ripple;
-            });
     },
 
     addToPattern : function() {
         this.pattern.push(Math.floor(4 * Math.random()) + 1);
     },
 
-    userPlay : function(opts) {
-        this.ripples.push({
-            pad : opts.pad,
-            dur : 0,
-            pos : {
-                x : opts.pos.x,
-                y : opts.pos.y
-            }
-        });
-
+    userPlay : function(pad) {
         // clicked wrong pad
-        if(this.pattern[this.user.idx] !== opts.pad) {
+        if(this.pattern[this.user.idx] !== pad) {
             this.lost = true;
 
             return;
