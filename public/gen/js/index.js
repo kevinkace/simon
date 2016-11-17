@@ -1470,14 +1470,22 @@ const pads$$1 = [ 1, 2, 3, 4 ];
 function clickPad(state, e) {
     let value = e.currentTarget.getAttribute("data-value"),
         rect  = e.currentTarget.getBoundingClientRect(),
-        pad   = parseInt(value, 10);
+        pad   = parseInt(value, 10),
+
+        x = e.pageX - rect.left,
+        y = e.pageY - rect.top;
+
+    if(e.pageX === 0 && e.pageY === 0) {
+        x = rect.width / 2;
+        y = rect.height /2;
+    }
 
     state.gameState.userPlay(pad);
 
     ripple$$1(state, {
         pad : pad,
-        x   : e.pageX - rect.left,
-        y   : e.pageY - rect.top
+        x   : x,
+        y   : y
     });
 }
 
@@ -1506,20 +1514,39 @@ function ripple$$1(state, opts) {
         });
 
     state.ui.update = update$1;
-
 }
 
 
 var pads$1 = {
+    oncreate : (vnode) => {
+        let state = vnode.attrs.state;
+        if(state.gameState) {
+            window.addEventListener("keydown", (e) => {
+                if(e.keyCode in state.gameState.keyMappings) {
+                    let button$$1 = vnode.dom.children[state.gameState.keyMappings[e.keyCode]].children[0],
+                        event  = new MouseEvent('click', {
+                            view       : window,
+                            bubbles    : true,
+                            cancelable : true
+                        });
+
+                    console.log(button$$1);
+
+                    button$$1.dispatchEvent(event);
+                }
+            });
+        }
+    },
     view : (vnode) => {
         let state  = vnode.attrs.state;
 
         state.ui.ripples = state.ui.ripples || [];
+        state.ui.pads = state.ui.pads || [];
 
         return index("section", { class : css$4.pads },
-            state.gameState ?
-                index("div", { class : css$4.length }, state.gameState.pattern.length) :
-                null,
+            // state.gameState ?
+            //     m("div", { class : css.length }, state.gameState.pattern.length) :
+            //     null,
             pads$$1.map((pad) => {
                 let ripples = [],
                     alight$$1  = null,
@@ -1614,9 +1641,15 @@ function GameState() {
     this.lost = false;
     this.pattern = [1];
     this.playback = true;
-    // this.ripples = [];
     this.user = {
         idx : 0
+    };
+
+    this.keyMappings = {
+        103 : 0,
+        105 : 1,
+        97  : 2,
+        99  : 3
     };
 }
 
