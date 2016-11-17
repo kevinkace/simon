@@ -14,6 +14,8 @@ export default {
     },
     game : {
         view : (vnode) =>
-            m(pads, vnode.attrs)
+            m(layout, [
+                m(pads, vnode.attrs)
+            ])
     }
 };

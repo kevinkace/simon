@@ -1604,7 +1604,9 @@ var scenes = {
     },
     game : {
         view : (vnode) =>
-            index(pads$1, vnode.attrs)
+            index(layout$$1, [
+                index(pads$1, vnode.attrs)
+            ])
     }
 };
 
