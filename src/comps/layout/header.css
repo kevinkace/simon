@@ -1,0 +1,22 @@
+.header {
+    display: flex;
+    flex: 1 1 20vw;
+}
+
+.logo {
+    flex: 1 0 80vw;
+}
+
+.hMenu {
+    flex: 0 0 20vw;
+}
+
+.button {
+    height: 100%;
+    width: 0;
+    padding: 0 100% 0 0;
+}
+
+.nav {
+    display: none;
+}

@@ -1,9 +1,17 @@
 @value * as colors from "../colors.css";
 
 .pads {
-    height: 100vh;
+    height: 100%;
     display: flex;
     flex-wrap: wrap;
+}
+
+.length {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 2;
+    font-size: 2em;
 }
 
 .quad {

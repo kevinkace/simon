@@ -1,20 +1,19 @@
 import m from "mithril";
 
+import layout from "../comps/layout";
 import pads from "../comps/pads";
 import intro from "../comps/intro";
 
 export default {
     intro : {
-        view : (vnode) => {
-            return [
+        view : (vnode) =>
+            m(layout, [
                 m(pads, vnode.attrs),
                 m(intro, vnode.attrs)
-            ];
-        }
+            ])
     },
     game : {
-        view : (vnode) => {
-            return m(pads, vnode.attrs);
-        }
+        view : (vnode) =>
+            m(pads, vnode.attrs)
     }
 };

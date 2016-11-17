@@ -54,6 +54,9 @@ export default {
         state.ui.ripples = state.ui.ripples || [];
 
         return m("section", { class : css.pads },
+            state.gameState ?
+                m("div", { class : css.length }, state.gameState.pattern.length) :
+                null,
             pads.map((pad) => {
                 let ripples = [],
                     alight  = null,

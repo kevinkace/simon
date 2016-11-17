@@ -1394,7 +1394,67 @@ var css = {
 };
 
 var css$1 = {
+    "header": "mca3d60bea_header",
+    "logo": "mca3d60bea_logo",
+    "hMenu": "mca3d60bea_hMenu",
+    "button": "mca3d60bea_button",
+    "nav": "mca3d60bea_nav"
+};
+
+const nav$$1 = [{
+        href : "/options",
+        text : "options"
+    }];
+
+var header$$1 = {
+    view : (vnode) =>
+        index("header", { class : css$1.header },
+            index("h1", { class : css$1.logo }, "looooogo"),
+            index("div", { class : css$1.hMenu },
+                index("button", {
+                        class   : css$1.button,
+                        onclick : () => console.log("do some shit")
+                    },
+                    "show nav"
+                ),
+                index("nav", { class : css$1.nav },
+                    nav$$1.map((navItem) =>
+                        index("a", {
+                            href    : navItem.href,
+                            onclick : (e) => console.log("other shit")
+                        }, navItem.text)
+                    )
+                )
+            )
+        )
+};
+
+var css$2 = {
+    "footer": "mc5c0b71a6_footer"
+};
+
+var footer$$1 = {
+    view : () =>
+        index("footer", { class : css$2.footer }, "Footer stuff")
+};
+
+var css$3 = {
+    "layout": "mc4df9e2fb_layout",
+    "section": "mc4df9e2fb_section"
+};
+
+var layout$$1 = {
+    view : (vnode) =>
+        index("div", { class : css$3.layout },
+            index(header$$1),
+            index("section", { class : css$3.section }, vnode.children),
+            index(footer$$1)
+        )
+};
+
+var css$4 = {
     "pads": "mc4dd3a996_pads",
+    "length": "mc4dd3a996_length",
     "quad": "mc4dd3a996_quad",
     "quad_1": "mc4dd3a996_quad mc4dd3a996_quad_1",
     "quad_2": "mc4dd3a996_quad mc4dd3a996_quad_2",
@@ -1456,12 +1516,15 @@ var pads$1 = {
 
         state.ui.ripples = state.ui.ripples || [];
 
-        return index("section", { class : css$1.pads },
+        return index("section", { class : css$4.pads },
+            state.gameState ?
+                index("div", { class : css$4.length }, state.gameState.pattern.length) :
+                null,
             pads$$1.map((pad) => {
                 let ripples = [],
                     alight$$1  = null,
                     attrs   = {
-                        class        : css$1.button,
+                        class        : css$4.button,
                         "data-value" : pad,
                         onclick      : (e) => e.preventDefault()
                     };
@@ -1471,7 +1534,7 @@ var pads$1 = {
                         attrs.disabled = "disabled";
 
                         if(state.gameState.alight === pad) {
-                            alight$$1 = index("span", { class : css$1.alight });
+                            alight$$1 = index("span", { class : css$4.alight });
                         }
                     }
 
@@ -1480,10 +1543,10 @@ var pads$1 = {
                     attrs.onclick = clickPad.bind(null, state);
                 }
 
-                return index("div", { class : css$1[`quad_${pad}`] },
+                return index("div", { class : css$4[`quad_${pad}`] },
                     alight$$1,
                     ripples.map((ripple$$1) => index("span", {
-                        class : css$1.ripple,
+                        class : css$4.ripple,
                         style : `left: ${ripple$$1.x}px; top: ${ripple$$1.y}px;`
                     })),
                     index("button", attrs, pad)
@@ -1493,19 +1556,19 @@ var pads$1 = {
     }
 };
 
-var css$2 = {
+var css$5 = {
     "intro": "mc7695c4cc_intro"
 };
 
-var css$3 = {
+var css$6 = {
     "button": "mc0023079d_button"
 };
 
-var button$1 = {
+var button$2 = {
     view : (vnode) => {
             return index("button",
                 Object.assign({
-                        class : css$3.button
+                        class : css$6.button
                     },
                     vnode.attrs.attrs
                 ),
@@ -1518,9 +1581,9 @@ var button$1 = {
 var intro$$1 = {
     view : (vnode) =>
         index("div", {
-                class : css$2.intro
+                class : css$5.intro
             },
-            index(button$1, {
+            index(button$2, {
                 attrs : {
                     onclick : () => {
                         vnode.attrs.state.newGame = true;
@@ -1533,17 +1596,15 @@ var intro$$1 = {
 
 var scenes = {
     intro : {
-        view : (vnode) => {
-            return [
+        view : (vnode) =>
+            index(layout$$1, [
                 index(pads$1, vnode.attrs),
                 index(intro$$1, vnode.attrs)
-            ];
-        }
+            ])
     },
     game : {
-        view : (vnode) => {
-            return index(pads$1, vnode.attrs);
-        }
+        view : (vnode) =>
+            index(pads$1, vnode.attrs)
     }
 };
 

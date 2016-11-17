@@ -1,0 +1,10 @@
+.layout {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.section {
+    flex: 1 1 100vw;
+    position: relative;
+}
