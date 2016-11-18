@@ -1660,6 +1660,7 @@ function GameState() {
     this.user = {
         idx : 0
     };
+    this.padsCount = 4;
 }
 
 GameState.prototype = {
@@ -1674,7 +1675,7 @@ GameState.prototype = {
     },
 
     addToPattern : function() {
-        this.pattern.push(Math.floor(4 * Math.random()) + 1);
+        this.pattern.push(Math.floor(this.padsCount * Math.random()) + 1);
     },
 
     userPlay : function(pad) {
