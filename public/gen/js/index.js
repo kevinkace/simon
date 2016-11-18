@@ -1654,12 +1654,12 @@ var scenes = {
 };
 
 function GameState() {
+    this.newGame   = true;
     this.lost      = false;
     this.pattern   = [];
+    this.padsCount = 4;
     this.playback  = true;
     this.userIdx   = 0;
-    this.newGame   = true;
-    this.padsCount = 4;
     // this.gameType = "rapidPattern";
 }
 
