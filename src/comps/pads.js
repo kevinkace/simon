@@ -59,12 +59,15 @@ export default {
         let state = vnode.attrs.state;
         if(state.gameState) {
             window.addEventListener("keydown", (e) => {
-                if(e.keyCode in state.keyMappings) {
-                    let button = state.ui.buttons[state.keyMappings[e.keyCode]].dom,
-                        event  = new MouseEvent("click");
+                let button;
 
-                    button.dispatchEvent(event);
+                if(!(e.keyCode in state.keyMappings)) {
+                    return;
                 }
+
+                button = state.ui.buttons[state.keyMappings[e.keyCode]].dom;
+
+                button.dispatchEvent(new MouseEvent("click"));
             });
         }
     },

@@ -1522,12 +1522,15 @@ var pads$1 = {
         let state = vnode.attrs.state;
         if(state.gameState) {
             window.addEventListener("keydown", (e) => {
-                if(e.keyCode in state.keyMappings) {
-                    let button$$1 = state.ui.buttons[state.keyMappings[e.keyCode]].dom,
-                        event  = new MouseEvent("click");
+                let button$$1;
 
-                    button$$1.dispatchEvent(event);
+                if(!(e.keyCode in state.keyMappings)) {
+                    return;
                 }
+
+                button$$1 = state.ui.buttons[state.keyMappings[e.keyCode]].dom;
+
+                button$$1.dispatchEvent(new MouseEvent("click"));
             });
         }
     },
@@ -1620,9 +1623,12 @@ var intro$$1 = {
                     },
                     oncreate : (vnode) => {
                         window.addEventListener("keydown", (e) => {
-                            debugger;
+                            if(e.keyCode !== 32) {
+                                return;
+                            }
+
                             vnode.dom.dispatchEvent(new MouseEvent("click"));
-                        });
+                        }, { once : true });
                     }
                 },
                 text : "play"
