@@ -13,6 +13,15 @@ export default {
                 attrs : {
                     onclick : () => {
                         vnode.attrs.state.newGame = true;
+                    },
+                    oncreate : (vnode) => {
+                        window.addEventListener("keydown", (e) => {
+                            if(e.keyCode !== 32) {
+                                return;
+                            }
+
+                            vnode.dom.dispatchEvent(new MouseEvent("click"));
+                        }, { once : true })
                     }
                 },
                 text : "play"

@@ -1617,6 +1617,12 @@ var intro$$1 = {
                 attrs : {
                     onclick : () => {
                         vnode.attrs.state.newGame = true;
+                    },
+                    oncreate : (vnode) => {
+                        window.addEventListener("keydown", (e) => {
+                            debugger;
+                            vnode.dom.dispatchEvent(new MouseEvent("click"));
+                        });
                     }
                 },
                 text : "play"
