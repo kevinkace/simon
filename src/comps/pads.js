@@ -59,13 +59,9 @@ export default {
         let state = vnode.attrs.state;
         if(state.gameState) {
             window.addEventListener("keydown", (e) => {
-                if(e.keyCode in state.gameState.keyMappings) {
-                    let button = vnode.dom.children[state.gameState.keyMappings[e.keyCode]].children[0],
-                        event  = new MouseEvent('click', {
-                            view       : window,
-                            bubbles    : true,
-                            cancelable : true
-                        });
+                if(e.keyCode in state.keyMappings) {
+                    let button = state.ui.buttons[state.keyMappings[e.keyCode]].dom,
+                        event  = new MouseEvent("click");
 
                     button.dispatchEvent(event);
                 }
@@ -77,7 +73,12 @@ export default {
 
         state.ui.ripples = state.ui.ripples || [];
 
-        return m("section", { class : css.pads },
+        return m("section", {
+                class  : css.pads,
+                oninit : (vnode) => {
+                    state.ui.buttons = [];
+                }
+            },
             // state.gameState ?
             //     m("div", { class : css.length }, state.gameState.pattern.length) :
             //     null,
@@ -87,7 +88,11 @@ export default {
                     attrs   = {
                         class        : css.button,
                         "data-value" : pad,
-                        onclick      : (e) => e.preventDefault()
+                        onclick      : (e) => e.preventDefault(),
+                        oncreate     : (vnode) => {
+                            // ref for hotkeys to fire click on button
+                            state.ui.buttons.push(vnode);
+                        }
                     };
 
                 if(state.gameState) {
@@ -105,7 +110,8 @@ export default {
                 }
 
                 return m("div", { class : css[`quad_${pad}`] },
-                    alight,
+                    alight, // PC light
+                    // User light
                     ripples.map((ripple) => m("span", {
                         class : css.ripple,
                         style : `left: ${ripple.x}px; top: ${ripple.y}px;`

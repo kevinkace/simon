@@ -1,16 +1,9 @@
 export default function GameState() {
     this.lost = false;
-    this.pattern = [1];
+    this.pattern = [ 1 ];
     this.playback = true;
     this.user = {
         idx : 0
-    };
-
-    this.keyMappings = {
-        103 : 0,
-        105 : 1,
-        97  : 2,
-        99  : 3
     };
 };
 

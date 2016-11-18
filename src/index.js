@@ -11,6 +11,12 @@ let state = {
     scenes : scenes,
     ui     : {
         update : () => null
+    },
+    keyMappings : {
+        103 : 0,
+        105 : 1,
+        97  : 2,
+        99  : 3
     }
 };
 

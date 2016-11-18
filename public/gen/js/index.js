@@ -1522,15 +1522,9 @@ var pads$1 = {
         let state = vnode.attrs.state;
         if(state.gameState) {
             window.addEventListener("keydown", (e) => {
-                if(e.keyCode in state.gameState.keyMappings) {
-                    let button$$1 = vnode.dom.children[state.gameState.keyMappings[e.keyCode]].children[0],
-                        event  = new MouseEvent('click', {
-                            view       : window,
-                            bubbles    : true,
-                            cancelable : true
-                        });
-
-                    console.log(button$$1);
+                if(e.keyCode in state.keyMappings) {
+                    let button$$1 = state.ui.buttons[state.keyMappings[e.keyCode]].dom,
+                        event  = new MouseEvent("click");
 
                     button$$1.dispatchEvent(event);
                 }
@@ -1541,9 +1535,13 @@ var pads$1 = {
         let state  = vnode.attrs.state;
 
         state.ui.ripples = state.ui.ripples || [];
-        state.ui.pads = state.ui.pads || [];
 
-        return index("section", { class : css$4.pads },
+        return index("section", {
+                class  : css$4.pads,
+                oninit : (vnode) => {
+                    state.ui.buttons = [];
+                }
+            },
             // state.gameState ?
             //     m("div", { class : css.length }, state.gameState.pattern.length) :
             //     null,
@@ -1553,7 +1551,11 @@ var pads$1 = {
                     attrs   = {
                         class        : css$4.button,
                         "data-value" : pad,
-                        onclick      : (e) => e.preventDefault()
+                        onclick      : (e) => e.preventDefault(),
+                        oncreate     : (vnode) => {
+                            // ref for hotkeys to fire click on button
+                            state.ui.buttons.push(vnode);
+                        }
                     };
 
                 if(state.gameState) {
@@ -1571,7 +1573,8 @@ var pads$1 = {
                 }
 
                 return index("div", { class : css$4[`quad_${pad}`] },
-                    alight$$1,
+                    alight$$1, // PC light
+                    // User light
                     ripples.map((ripple$$1) => index("span", {
                         class : css$4.ripple,
                         style : `left: ${ripple$$1.x}px; top: ${ripple$$1.y}px;`
@@ -1639,17 +1642,10 @@ var scenes = {
 
 function GameState() {
     this.lost = false;
-    this.pattern = [1];
+    this.pattern = [ 1 ];
     this.playback = true;
     this.user = {
         idx : 0
-    };
-
-    this.keyMappings = {
-        103 : 0,
-        105 : 1,
-        97  : 2,
-        99  : 3
     };
 }
 
@@ -1734,6 +1730,12 @@ let state$1 = {
     scenes : scenes,
     ui     : {
         update : () => null
+    },
+    keyMappings : {
+        103 : 0,
+        105 : 1,
+        97  : 2,
+        99  : 3
     }
 };
 
