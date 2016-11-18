@@ -1,17 +1,24 @@
 export default function GameState() {
-    this.lost = false;
-    this.pattern = [ 1 ];
-    this.playback = true;
-    this.user = {
-        idx : 0
-    };
+    this.lost      = false;
+    this.pattern   = [];
+    this.playback  = true;
+    this.userIdx   = 0;
+    this.newGame   = true;
     this.padsCount = 4;
+    // this.gameType = "rapidPattern";
 };
 
 GameState.prototype = {
     update : function(delta) {
         if(this.lost) {
             this.newGame = confirm("you lost");
+
+            return;
+        }
+
+        if(this.newGame) {
+            this.newGame = false;
+            this.updatePattern();
         }
 
         if(this.playback) {
@@ -19,25 +26,41 @@ GameState.prototype = {
         }
     },
 
-    addToPattern : function() {
-        this.pattern.push(Math.floor(this.padsCount * Math.random()) + 1);
+    addToPattern : function(num) {
+        num = num || 1;
+
+        for(let i = 0; i < num; i++) {
+            this.pattern.push(Math.floor(this.padsCount * Math.random()) + 1);
+        }
+    },
+
+    updatePattern : function() {
+        switch(this.gameType) {
+            case "rapidPattern" :
+                this.pattern = [];
+                this.addToPattern(5);
+                break;
+
+            default :
+                this.addToPattern();
+        }
     },
 
     userPlay : function(pad) {
         // clicked wrong pad
-        if(this.pattern[this.user.idx] !== pad) {
+        if(this.pattern[this.userIdx] !== pad) {
             this.lost = true;
 
             return;
         }
 
-        this.user.idx++;
+        this.userIdx++;
 
         // user turn over
-        if(this.user.idx === this.pattern.length) {
-            this.addToPattern();
+        if(this.userIdx === this.pattern.length) {
+            this.updatePattern();
 
-            this.user.idx = 0;
+            this.userIdx = 0;
             this.playback = true;
         }
     },
