@@ -3,6 +3,10 @@ import m from "mithril";
 import css from "./footer.css";
 
 export default {
-    view : () =>
-        m("footer", { class : css.footer }, "Footer stuff")
+    view : (vnode) =>
+        m("footer", { class : css.footer },
+            vnode.attrs.state.gameState ?
+                vnode.attrs.state.gameState.pattern.length :
+                null
+        )
 };

@@ -10,6 +10,6 @@ export default {
         m("div", { class : css.layout },
             m(header),
             m("section", { class : css.section }, vnode.children),
-            m(footer)
+            m(footer, vnode.attrs)
         )
 };

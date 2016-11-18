@@ -82,9 +82,6 @@ export default {
                     state.ui.buttons = [];
                 }
             },
-            // state.gameState ?
-            //     m("div", { class : css.length }, state.gameState.pattern.length) :
-            //     null,
             pads.map((pad) => {
                 let ripples = [],
                     alight  = null,

@@ -1434,8 +1434,12 @@ var css$2 = {
 };
 
 var footer$$1 = {
-    view : () =>
-        index("footer", { class : css$2.footer }, "Footer stuff")
+    view : (vnode) =>
+        index("footer", { class : css$2.footer },
+            vnode.attrs.state.gameState ?
+                vnode.attrs.state.gameState.pattern.length :
+                null
+        )
 };
 
 var css$3 = {
@@ -1448,7 +1452,7 @@ var layout$$1 = {
         index("div", { class : css$3.layout },
             index(header$$1),
             index("section", { class : css$3.section }, vnode.children),
-            index(footer$$1)
+            index(footer$$1, vnode.attrs)
         )
 };
 
@@ -1545,9 +1549,6 @@ var pads$1 = {
                     state.ui.buttons = [];
                 }
             },
-            // state.gameState ?
-            //     m("div", { class : css.length }, state.gameState.pattern.length) :
-            //     null,
             pads$$1.map((pad) => {
                 let ripples = [],
                     alight$$1  = null,
@@ -1639,14 +1640,14 @@ var intro$$1 = {
 var scenes = {
     intro : {
         view : (vnode) =>
-            index(layout$$1, [
+            index(layout$$1, vnode.attrs, [
                 index(pads$1, vnode.attrs),
                 index(intro$$1, vnode.attrs)
             ])
     },
     game : {
         view : (vnode) =>
-            index(layout$$1, [
+            index(layout$$1, vnode.attrs, [
                 index(pads$1, vnode.attrs)
             ])
     }
