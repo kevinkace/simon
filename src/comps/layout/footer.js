@@ -9,10 +9,13 @@ export default {
             timer = null;
 
         if(gameState) {
-            timer = ((gameState.userTimer.limit - gameState.userTimer.cur) /1000).toFixed(2);
+            timer = (gameState.userTimer.limit - gameState.userTimer.cur) /1000;
+
             if(timer < 0) {
                 timer = 0;
             }
+
+            timer = timer.toFixed(2);
         }
 
         return m("footer", { class : css.footer },

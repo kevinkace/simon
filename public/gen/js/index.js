@@ -1436,8 +1436,12 @@ var css$2 = {
     "timer": "mc5c0b71a6_timer",
     "level": "mc5c0b71a6_sides mc5c0b71a6_level",
     "header": "mc5c0b71a6_header",
+    "val": "mc5c0b71a6_val",
     "countHeader": "mc5c0b71a6_header mc5c0b71a6_countHeader",
-    "levelHeader": "mc5c0b71a6_header mc5c0b71a6_levelHeader"
+    "levelHeader": "mc5c0b71a6_header mc5c0b71a6_levelHeader",
+    "countVal": "mc5c0b71a6_val mc5c0b71a6_countVal",
+    "levelVal": "mc5c0b71a6_val mc5c0b71a6_levelVal",
+    "timerVal": "mc5c0b71a6_timerVal"
 };
 
 var footer$$1 = {
@@ -1447,10 +1451,13 @@ var footer$$1 = {
             timer$$1 = null;
 
         if(gameState) {
-            timer$$1 = ((gameState.userTimer.limit - gameState.userTimer.cur) /1000).toFixed(2);
+            timer$$1 = (gameState.userTimer.limit - gameState.userTimer.cur) /1000;
+
             if(timer$$1 < 0) {
                 timer$$1 = 0;
             }
+
+            timer$$1 = timer$$1.toFixed(2);
         }
 
         return index("footer", { class : css$2.footer },

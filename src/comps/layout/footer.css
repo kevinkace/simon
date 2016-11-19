@@ -7,6 +7,8 @@
 
 .sides {
     flex: 0 0 20%;
+    display: flex;
+    flex-direction: column;
 }
 
 .count {
@@ -25,7 +27,12 @@
     composes: sides;
 }
 
-.header {
+.header,
+.val {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
     margin: 0;
     padding: 0;
 }
@@ -33,4 +40,29 @@
 .countHeader,
 .levelHeader {
     composes: header;
+
+    flex: 0 0 30%;
+}
+
+.countVal,
+.levelVal {
+    composes: val;
+
+    flex: 0 0 70%;
+
+    font-size: 3em;
+}
+
+.timerVal {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+
+    font-size: 4em;
 }
