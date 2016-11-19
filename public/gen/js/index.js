@@ -1493,6 +1493,17 @@ function clickPad(state, e) {
     });
 }
 
+function keyPad(state, e) {
+    let button$$1;
+
+    if(!(e.keyCode in state.keyMappings)) {
+        return;
+    }
+
+    button$$1 = state.ui.buttons[state.keyMappings[e.keyCode]].dom;
+
+    button$$1.dispatchEvent(new MouseEvent("click"));
+}
 
 function update$1(delta) {
     let dur = 800;
@@ -1525,17 +1536,13 @@ var pads$1 = {
     oncreate : (vnode) => {
         let state = vnode.attrs.state;
         if(state.gameState) {
-            window.addEventListener("keydown", (e) => {
-                let button$$1;
-
-                if(!(e.keyCode in state.keyMappings)) {
-                    return;
-                }
-
-                button$$1 = state.ui.buttons[state.keyMappings[e.keyCode]].dom;
-
-                button$$1.dispatchEvent(new MouseEvent("click"));
-            });
+            state.remove = keyPad.bind(null, state);
+            window.addEventListener("keydown", state.remove);
+        }
+    },
+    onremove : (vnode) => {
+        if(state.gameState) {
+            window.removeEventListener("keydown", vnode.attrs.state.remove);
         }
     },
     view : (vnode) => {
@@ -1694,7 +1701,6 @@ GameState.prototype = {
     update : function(delta) {
         if(this.lost) {
             this.lost = true;
-            // this.newGame = confirm("you lost");
 
             return;
         }
@@ -1732,6 +1738,7 @@ GameState.prototype = {
     userPlay : function(pad) {
         // clicked wrong pad
         if(this.pattern[this.userIdx] !== pad) {
+            debugger;
             this.lost = true;
 
             return;

@@ -26,6 +26,17 @@ function clickPad(state, e) {
     });
 }
 
+function keyPad(state, e) {
+    let button;
+
+    if(!(e.keyCode in state.keyMappings)) {
+        return;
+    }
+
+    button = state.ui.buttons[state.keyMappings[e.keyCode]].dom;
+
+    button.dispatchEvent(new MouseEvent("click"));
+}
 
 function update(delta) {
     let dur = 800;
@@ -58,17 +69,13 @@ export default {
     oncreate : (vnode) => {
         let state = vnode.attrs.state;
         if(state.gameState) {
-            window.addEventListener("keydown", (e) => {
-                let button;
-
-                if(!(e.keyCode in state.keyMappings)) {
-                    return;
-                }
-
-                button = state.ui.buttons[state.keyMappings[e.keyCode]].dom;
-
-                button.dispatchEvent(new MouseEvent("click"));
-            });
+            state.remove = keyPad.bind(null, state);
+            window.addEventListener("keydown", state.remove);
+        }
+    },
+    onremove : (vnode) => {
+        if(state.gameState) {
+            window.removeEventListener("keydown", vnode.attrs.state.remove);
         }
     },
     view : (vnode) => {
