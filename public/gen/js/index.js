@@ -1591,7 +1591,12 @@ var pads$1 = {
 };
 
 var css$5 = {
-    "intro": "mc7695c4cc_intro"
+    "overlay": "mc6a145ad9_overlay"
+};
+
+var overlay$$1 = {
+    view : (vnode) =>
+        index("div", { class : css$5.overlay }, vnode.children)
 };
 
 var css$6 = {
@@ -1599,24 +1604,22 @@ var css$6 = {
 };
 
 var button$2 = {
-    view : (vnode) => {
-            return index("button",
-                Object.assign({
-                        class : css$6.button
-                    },
-                    vnode.attrs.attrs
-                ),
-                vnode.attrs.text
-                    .split("")
-                    .map((letter) => index("i", letter))
-            )}
+    view : (vnode) =>
+        index("button",
+            Object.assign({
+                    class : css$6.button
+                },
+                vnode.attrs.attrs
+            ),
+            (vnode.attrs.text || "")
+                .split("")
+                .map((letter) => index("i", letter))
+        )
 };
 
 var intro$$1 = {
     view : (vnode) =>
-        index("div", {
-                class : css$5.intro
-            },
+        index(overlay$$1,
             index(button$2, {
                 attrs : {
                     onclick : () => {
@@ -1637,6 +1640,23 @@ var intro$$1 = {
         )
 };
 
+var lost = {
+    view : (vnode) => {
+        let state = vnode.attrs.state;
+
+        return index(overlay$$1, vnode.attrs.state,
+            index(button$2, {
+                attrs : {
+                    onclick : (vnode) => {
+                        state.newGame = true;
+                    }
+                },
+                text : "play again?"
+            })
+        )
+    }
+};
+
 var scenes = {
     intro : {
         view : (vnode) =>
@@ -1649,6 +1669,13 @@ var scenes = {
         view : (vnode) =>
             index(layout$$1, vnode.attrs, [
                 index(pads$1, vnode.attrs)
+            ])
+    },
+    lost : {
+        view : (vnode) =>
+            index(layout$$1, vnode.attrs, [
+                index(pads$1, vnode.attrs),
+                index(lost, vnode.attrs)
             ])
     }
 };
@@ -1666,7 +1693,8 @@ function GameState() {
 GameState.prototype = {
     update : function(delta) {
         if(this.lost) {
-            this.newGame = confirm("you lost");
+            this.lost = true;
+            // this.newGame = confirm("you lost");
 
             return;
         }
@@ -1785,12 +1813,18 @@ const comp = {
         ]
     };
 const update = function(delta) {
+        // debug
         state$1.ticker = Math.floor(Date.now()/1000);
 
+        // for ripples etc
+        state$1.ui.update(delta);
+
+        // not a new game and no gameState
         if(!state$1.newGame && !state$1.gameState) {
             return;
         }
 
+        // first game or start new game
         if(state$1.newGame || (state$1.gameState && state$1.gameState.newGame)) {
             state$1.newGame = false;
             state$1.scene = state$1.scenes.game;
@@ -1798,11 +1832,16 @@ const update = function(delta) {
             state$1.gameState = new GameState();
         }
 
+        // in game
         if(state$1.gameState) {
+            // but lost
+            if(state$1.gameState.lost) {
+                state$1.scene = state$1.scenes.lost;
+                return;
+            }
+
             state$1.gameState.update(delta);
         }
-
-        state$1.ui.update(delta);
     };
 
 index.mount(document.body, comp);
@@ -1813,7 +1852,7 @@ window.ML = mainloop_min;
 window.state = state$1;
 
 // Stop/start processing with focus
-// performance without profiling :metal:
+// assuming perf wins without profiling :+1:
 // window.addEventListener("blur", () => {
 //     MainLoop.stop();
 // })

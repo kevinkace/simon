@@ -2,13 +2,12 @@
 
 import css from "./intro.css";
 
+import overlay from "./overlay";
 import button from "./button";
 
 export default {
     view : (vnode) =>
-        m("div", {
-                class : css.intro
-            },
+        m(overlay,
             m(button, {
                 attrs : {
                     onclick : () => {

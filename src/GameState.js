@@ -11,7 +11,7 @@ export default function GameState() {
 GameState.prototype = {
     update : function(delta) {
         if(this.lost) {
-            this.newGame = confirm("you lost");
+            this.lost = true;
 
             return;
         }

@@ -30,12 +30,18 @@ const comp = {
     },
 
     update = function(delta) {
+        // debug
         state.ticker = Math.floor(Date.now()/1000);
 
+        // for ripples etc
+        state.ui.update(delta);
+
+        // not a new game and no gameState
         if(!state.newGame && !state.gameState) {
             return;
         }
 
+        // first game or start new game
         if(state.newGame || (state.gameState && state.gameState.newGame)) {
             state.newGame = false;
             state.scene = state.scenes.game;
@@ -43,11 +49,16 @@ const comp = {
             state.gameState = new GameState();
         }
 
+        // in game
         if(state.gameState) {
+            // but lost
+            if(state.gameState.lost) {
+                state.scene = state.scenes.lost;
+                return;
+            }
+
             state.gameState.update(delta);
         }
-
-        state.ui.update(delta);
     };
 
 m.mount(document.body, comp);
@@ -58,7 +69,7 @@ window.ML = MainLoop;
 window.state = state;
 
 // Stop/start processing with focus
-// performance without profiling :metal:
+// assuming perf wins without profiling :+1:
 // window.addEventListener("blur", () => {
 //     MainLoop.stop();
 // })
