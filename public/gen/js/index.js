@@ -1458,7 +1458,6 @@ var layout$$1 = {
 
 var css$4 = {
     "pads": "mc4dd3a996_pads",
-    "length": "mc4dd3a996_length",
     "quad": "mc4dd3a996_quad",
     "quad_1": "mc4dd3a996_quad mc4dd3a996_quad_1",
     "quad_2": "mc4dd3a996_quad mc4dd3a996_quad_2",
@@ -1738,7 +1737,6 @@ GameState.prototype = {
     userPlay : function(pad) {
         // clicked wrong pad
         if(this.pattern[this.userIdx] !== pad) {
-            debugger;
             this.lost = true;
 
             return;
