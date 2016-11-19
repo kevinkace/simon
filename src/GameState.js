@@ -5,6 +5,7 @@ export default function GameState() {
     this.padsCount = 4;
     this.playback  = true;
     this.userIdx   = 0;
+    this.speed     = 5;
     // this.gameType = "rapidPattern";
 };
 
@@ -66,7 +67,7 @@ GameState.prototype = {
     },
 
     playSteps : function(delta) {
-        let period = 300,
+        let period = 1000 / this.speed,
             delay  = period / 2;
 
         // first light
