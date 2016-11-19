@@ -1,3 +1,36 @@
 .footer {
     flex: 1 1 20vw;
+    display: flex;
+
+    text-align: center;
+}
+
+.sides {
+    flex: 0 0 20%;
+}
+
+.count {
+    composes: sides;
+}
+
+.timer {
+    flex: 1 0 auto;
+    position: relative;
+
+    border: solid 1px #000;
+    border-width: 0 1px;
+}
+
+.level {
+    composes: sides;
+}
+
+.header {
+    margin: 0;
+    padding: 0;
+}
+
+.countHeader,
+.levelHeader {
+    composes: header;
 }

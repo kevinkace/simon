@@ -5,6 +5,10 @@ export default function GameState() {
     this.padsCount = 4;
     this.playback  = true;
     this.userIdx   = 0;
+    this.userTimer = {
+        cur   : 0,
+        limit : 800
+    };
     this.speed     = 5;
     // this.gameType = "rapidPattern";
 };
@@ -24,6 +28,8 @@ GameState.prototype = {
 
         if(this.playback) {
             this.playSteps(delta);
+        } else {
+            this.updateUserTimer(delta);
         }
     },
 
@@ -48,6 +54,7 @@ GameState.prototype = {
     },
 
     userPlay : function(pad) {
+        this.resetUserTimer();
         // clicked wrong pad
         if(this.pattern[this.userIdx] !== pad) {
             this.lost = true;
@@ -64,6 +71,19 @@ GameState.prototype = {
             this.userIdx = 0;
             this.playback = true;
         }
+    },
+
+    updateUserTimer : function(delta) {
+        this.userTimer.cur += delta;
+
+        if(this.userTimer.cur > this.userTimer.limit) {
+            this.lost = true;
+            return;
+        }
+    },
+
+    resetUserTimer : function() {
+        this.userTimer.cur = 0;
     },
 
     playSteps : function(delta) {

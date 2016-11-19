@@ -1430,16 +1430,57 @@ var header$$1 = {
 };
 
 var css$2 = {
-    "footer": "mc5c0b71a6_footer"
+    "footer": "mc5c0b71a6_footer",
+    "sides": "mc5c0b71a6_sides",
+    "count": "mc5c0b71a6_sides mc5c0b71a6_count",
+    "timer": "mc5c0b71a6_timer",
+    "level": "mc5c0b71a6_sides mc5c0b71a6_level",
+    "header": "mc5c0b71a6_header",
+    "countHeader": "mc5c0b71a6_header mc5c0b71a6_countHeader",
+    "levelHeader": "mc5c0b71a6_header mc5c0b71a6_levelHeader"
 };
 
 var footer$$1 = {
-    view : (vnode) =>
-        index("footer", { class : css$2.footer },
-            vnode.attrs.state.gameState ?
-                vnode.attrs.state.gameState.pattern.length :
-                null
-        )
+    view : (vnode) => {
+        let state = vnode.attrs.state,
+            gameState = state.gameState,
+            timer$$1 = null;
+
+        if(gameState) {
+            timer$$1 = ((gameState.userTimer.limit - gameState.userTimer.cur) /1000).toFixed(2);
+            if(timer$$1 < 0) {
+                timer$$1 = 0;
+            }
+        }
+
+        return index("footer", { class : css$2.footer },
+            index("div", { class : css$2.count },
+                index("h3", { class : css$2.countHeader },
+                    "steps"
+                ),
+                index("p", { class : css$2.countVal },
+                    gameState ?
+                    gameState.pattern.length :
+                    null
+                )
+            ),
+            index("div", { class : css$2.timer },
+                index("div", { class : css$2.timerBar }),
+                index("div", { class : css$2.timerVal },
+                    timer$$1
+                )
+            ),
+            index("div", { class : css$2.level },
+                index("h3", { class : css$2.levelHeader },
+                    "level"
+                ),
+                index("p", { class : css$2.levelVal },
+                    // hard coded for now
+                    1
+                )
+            )
+        );
+    }
 };
 
 var css$3 = {
@@ -1693,6 +1734,10 @@ function GameState() {
     this.padsCount = 4;
     this.playback  = true;
     this.userIdx   = 0;
+    this.userTimer = {
+        cur   : 0,
+        limit : 800
+    };
     this.speed     = 5;
     // this.gameType = "rapidPattern";
 }
@@ -1712,6 +1757,8 @@ GameState.prototype = {
 
         if(this.playback) {
             this.playSteps(delta);
+        } else {
+            this.updateUserTimer(delta);
         }
     },
 
@@ -1736,6 +1783,7 @@ GameState.prototype = {
     },
 
     userPlay : function(pad) {
+        this.resetUserTimer();
         // clicked wrong pad
         if(this.pattern[this.userIdx] !== pad) {
             this.lost = true;
@@ -1752,6 +1800,19 @@ GameState.prototype = {
             this.userIdx = 0;
             this.playback = true;
         }
+    },
+
+    updateUserTimer : function(delta) {
+        this.userTimer.cur += delta;
+
+        if(this.userTimer.cur > this.userTimer.limit) {
+            this.lost = true;
+            return;
+        }
+    },
+
+    resetUserTimer : function() {
+        this.userTimer.cur = 0;
     },
 
     playSteps : function(delta) {
