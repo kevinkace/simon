@@ -8,10 +8,10 @@ import lost from "../comps/lost";
 export default {
     intro : {
         view : (vnode) =>
-            m(layout, vnode.attrs, [
-                m(pads, vnode.attrs),
+            // m(layout, vnode.attrs, [
+            //     m(pads, vnode.attrs),
                 m(intro, vnode.attrs)
-            ])
+            // ])
     },
     game : {
         view : (vnode) =>

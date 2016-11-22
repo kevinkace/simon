@@ -104,211 +104,117 @@ hyperscript.fragment = fragment;
 
 var hyperscript_1 = hyperscript;
 
-var stream$2 = function(log) {
-	var guid = 0, noop = function() {}, HALT = {};
-	function createStream() {
-		function stream() {
-			if (arguments.length > 0 && arguments[0] !== HALT) updateStream(stream, arguments[0], undefined);
-			return stream._state.value
-		}
-		initStream(stream);
+var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-		if (arguments.length > 0 && arguments[0] !== HALT) updateStream(stream, arguments[0], undefined);
 
-		return stream
-	}
-	function initStream(stream) {
-		stream.constructor = createStream;
-		stream._state = {id: guid++, value: undefined, error: undefined, state: 0, derive: undefined, recover: undefined, deps: {}, parents: [], errorStream: undefined, endStream: undefined};
-		stream["fantasy-land/map"] = map, stream["fantasy-land/ap"] = ap, stream["fantasy-land/of"] = createStream;
-		stream.valueOf = valueOf, stream.toJSON = toJSON, stream.toString = valueOf;
-		stream.run = run, stream.catch = doCatch;
 
-		Object.defineProperties(stream, {
-			error: {get: function() {
-				if (!stream._state.errorStream) {
-					var errorStream = function() {
-						if (arguments.length > 0 && arguments[0] !== HALT) updateStream(stream, undefined, arguments[0]);
-						return stream._state.error
-					};
-					initStream(errorStream);
-					initDependency(errorStream, [stream], noop, noop);
-					stream._state.errorStream = errorStream;
+
+
+function createCommonjsModule(fn, module) {
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
+}
+
+var PromisePolyfill$1 = function(executor) {
+	if (!(this instanceof PromisePolyfill$1)) throw new Error("Promise must be called with `new`")
+	if (typeof executor !== "function") throw new TypeError("executor must be a function")
+
+	var self = this, resolvers = [], rejectors = [], resolveCurrent = handler(resolvers, true), rejectCurrent = handler(rejectors, false);
+	var instance = self._instance = {resolvers: resolvers, rejectors: rejectors};
+	var callAsync = typeof setImmediate === "function" ? setImmediate : setTimeout;
+	function handler(list, shouldAbsorb) {
+		return function execute(value) {
+			var then;
+			try {
+				if (shouldAbsorb && value != null && (typeof value === "object" || typeof value === "function") && typeof (then = value.then) === "function") {
+					if (value === self) throw new TypeError("Promise can't be resolved w/ itself")
+					executeOnce(then.bind(value));
 				}
-				return stream._state.errorStream
-			}},
-			end: {get: function() {
-				if (!stream._state.endStream) {
-					var endStream = createStream();
-					endStream["fantasy-land/map"](function(value) {
-						if (value === true) unregisterStream(stream), unregisterStream(endStream);
-						return value
+				else {
+					callAsync(function() {
+						if (!shouldAbsorb && list.length === 0) console.error("Possible unhandled promise rejection:", value);
+						for (var i = 0; i < list.length; i++) list[i](value);
+						resolvers.length = 0, rejectors.length = 0;
+						instance.state = shouldAbsorb;
+						instance.retry = function() {execute(value);};
 					});
-					stream._state.endStream = endStream;
 				}
-				return stream._state.endStream
-			}}
+			}
+			catch (e) {
+				rejectCurrent(e);
+			}
+		}
+	}
+	function executeOnce(then) {
+		var runs = 0;
+		function run(fn) {
+			return function(value) {
+				if (runs++ > 0) return
+				fn(value);
+			}
+		}
+		var onerror = run(rejectCurrent);
+		try {then(run(resolveCurrent), onerror);} catch (e) {onerror(e);}
+	}
+
+	executeOnce(executor);
+};
+PromisePolyfill$1.prototype.then = function(onFulfilled, onRejection) {
+	var self = this, instance = self._instance;
+	function handle(callback, list, next, state) {
+		list.push(function(value) {
+			if (typeof callback !== "function") next(value);
+			else try {resolveNext(callback(value));} catch (e) {if (rejectNext) rejectNext(e);}
 		});
+		if (typeof instance.retry === "function" && state === instance.state) instance.retry();
 	}
-	function updateStream(stream, value, error) {
-		updateState(stream, value, error);
-		for (var id in stream._state.deps) updateDependency(stream._state.deps[id], false);
-		finalize(stream);
-	}
-	function updateState(stream, value, error) {
-		error = unwrapError(value, error);
-		if (error !== undefined && typeof stream._state.recover === "function") {
-			if (!resolve(stream, updateValues, true)) return
+	var resolveNext, rejectNext;
+	var promise = new PromisePolyfill$1(function(resolve, reject) {resolveNext = resolve, rejectNext = reject;});
+	handle(onFulfilled, instance.resolvers, resolveNext, true), handle(onRejection, instance.rejectors, rejectNext, false);
+	return promise
+};
+PromisePolyfill$1.prototype.catch = function(onRejection) {
+	return this.then(null, onRejection)
+};
+PromisePolyfill$1.resolve = function(value) {
+	if (value instanceof PromisePolyfill$1) return value
+	return new PromisePolyfill$1(function(resolve) {resolve(value);})
+};
+PromisePolyfill$1.reject = function(value) {
+	return new PromisePolyfill$1(function(resolve, reject) {reject(value);})
+};
+PromisePolyfill$1.all = function(list) {
+	return new PromisePolyfill$1(function(resolve, reject) {
+		var total = list.length, count = 0, values = [];
+		if (list.length === 0) resolve([]);
+		else for (var i = 0; i < list.length; i++) {
+			(function(i) {
+				function consume(value) {
+					count++;
+					values[i] = value;
+					if (count === total) resolve(values);
+				}
+				if (list[i] != null && (typeof list[i] === "object" || typeof list[i] === "function") && typeof list[i].then === "function") {
+					list[i].then(consume, reject);
+				}
+				else consume(list[i]);
+			})(i);
 		}
-		else updateValues(stream, value, error);
-		stream._state.changed = true;
-		if (stream._state.state !== 2) stream._state.state = 1;
-	}
-	function updateValues(stream, value, error) {
-		stream._state.value = value;
-		stream._state.error = error;
-	}
-	function updateDependency(stream, mustSync) {
-		var state = stream._state, parents = state.parents;
-		if (parents.length > 0 && parents.filter(active).length === parents.length && (mustSync || parents.filter(changed).length > 0)) {
-			var failed = parents.filter(errored);
-			if (failed.length > 0) updateState(stream, undefined, failed[0]._state.error);
-			else resolve(stream, updateState, false);
+	})
+};
+PromisePolyfill$1.race = function(list) {
+	return new PromisePolyfill$1(function(resolve, reject) {
+		for (var i = 0; i < list.length; i++) {
+			list[i].then(resolve, reject);
 		}
-	}
-	function resolve(stream, update, shouldRecover) {
-		try {
-			var value = shouldRecover ? stream._state.recover() : stream._state.derive();
-			if (value === HALT) return false
-			update(stream, value, undefined);
-		}
-		catch (e) {
-			update(stream, undefined, e.__error != null ? e.__error : e);
-			if (e.__error == null) reportUncaughtError(stream, e);
-		}
-		return true
-	}
-	function unwrapError(value, error) {
-		if (value != null && value.constructor === createStream) {
-			if (value._state.error !== undefined) error = value._state.error;
-			else error = unwrapError(value._state.value, value._state.error);
-		}
-		return error
-	}
-	function finalize(stream) {
-		stream._state.changed = false;
-		for (var id in stream._state.deps) stream._state.deps[id]._state.changed = false;
-	}
-	function reportUncaughtError(stream, e) {
-		if (Object.keys(stream._state.deps).length === 0) {
-			setTimeout(function() {
-				if (Object.keys(stream._state.deps).length === 0) log(e);
-			}, 0);
-		}
-	}
-
-	function run(fn) {
-		var self = createStream(), stream = this;
-		return initDependency(self, [stream], function() {
-			return absorb(self, fn(stream()))
-		}, undefined)
-	}
-	function doCatch(fn) {
-		var self = createStream(), stream = this;
-		var derive = function() {return stream._state.value};
-		var recover = function() {return absorb(self, fn(stream._state.error))};
-		return initDependency(self, [stream], derive, recover)
-	}
-	function combine(fn, streams) {
-		if (streams.length > streams.filter(valid).length) throw new Error("Ensure that each item passed to m.prop.combine/m.prop.merge is a stream")
-		return initDependency(createStream(), streams, function() {
-			var failed = streams.filter(errored);
-			if (failed.length > 0) throw {__error: failed[0]._state.error}
-			return fn.apply(this, streams.concat([streams.filter(changed)]))
-		}, undefined)
-	}
-	function absorb(stream, value) {
-		if (value != null && value.constructor === createStream) {
-			var absorbable = value;
-			var update = function() {
-				updateState(stream, absorbable._state.value, absorbable._state.error);
-				for (var id in stream._state.deps) updateDependency(stream._state.deps[id], false);
-			};
-			absorbable["fantasy-land/map"](update).catch(function(e) {
-				update();
-				throw {__error: e}
-			});
-			
-			if (absorbable._state.state === 0) return HALT
-			if (absorbable._state.error) throw {__error: absorbable._state.error}
-			value = absorbable._state.value;
-		}
-		return value
-	}
-
-	function initDependency(dep, streams, derive, recover) {
-		var state = dep._state;
-		state.derive = derive;
-		state.recover = recover;
-		state.parents = streams.filter(notEnded);
-
-		registerDependency(dep, state.parents);
-		updateDependency(dep, true);
-
-		return dep
-	}
-	function registerDependency(stream, parents) {
-		for (var i = 0; i < parents.length; i++) {
-			parents[i]._state.deps[stream._state.id] = stream;
-			registerDependency(stream, parents[i]._state.parents);
-		}
-	}
-	function unregisterStream(stream) {
-		for (var i = 0; i < stream._state.parents.length; i++) {
-			var parent = stream._state.parents[i];
-			delete parent._state.deps[stream._state.id];
-		}
-		for (var id in stream._state.deps) {
-			var dependent = stream._state.deps[id];
-			var index = dependent._state.parents.indexOf(stream);
-			if (index > -1) dependent._state.parents.splice(index, 1);
-		}
-		stream._state.state = 2; //ended
-		stream._state.deps = {};
-	}
-
-	function map(fn) {return combine(function(stream) {return fn(stream())}, [this])}
-	function ap(stream) {return combine(function(s1, s2) {return s1()(s2())}, [stream, this])}
-	function valueOf() {return this._state.value}
-	function toJSON() {return this._state.value != null && typeof this._state.value.toJSON === "function" ? this._state.value.toJSON() : this._state.value}
-
-	function valid(stream) {return stream._state }
-	function active(stream) {return stream._state.state === 1}
-	function changed(stream) {return stream._state.changed}
-	function notEnded(stream) {return stream._state.state !== 2}
-	function errored(stream) {return stream._state.error}
-
-	function reject(e) {
-		var stream = createStream();
-		stream.error(e);
-		return stream
-	}
-
-	function merge(streams) {
-		return combine(function () {
-			return streams.map(function(s) {return s()})
-		}, streams)
-	}
-	createStream["fantasy-land/of"] = createStream;
-	createStream.merge = merge;
-	createStream.combine = combine;
-	createStream.reject = reject;
-	createStream.HALT = HALT;
-
-	return createStream
+	})
 };
 
-var stream = stream$2(console.log.bind(console));
+if (typeof Promise === "undefined") {
+	if (typeof window !== "undefined") window.Promise = PromisePolyfill$1;
+	else if (typeof commonjsGlobal !== "undefined") commonjsGlobal.Promise = PromisePolyfill$1;
+}
+
+var promise = typeof Promise !== "undefined" ? Promise : PromisePolyfill$1;
 
 var build = function(object) {
 	if (Object.prototype.toString.call(object) !== "[object Object]") return ""
@@ -336,100 +242,105 @@ var build = function(object) {
 
 var buildQueryString = build;
 
-var request$2 = function($window, Stream) {
+var request$2 = function($window, Promise) {
 	var callbackCount = 0;
 
+	var count = 0;
 	var oncompletion;
 	function setCompletionCallback(callback) {oncompletion = callback;}
+	function complete() {if (--count === 0 && typeof oncompletion === "function") oncompletion();}
 
-	function request(args, extra) {
-		if(typeof args === "string"){
-			var url = args;
-
-			if(typeof extra === "object")	args = extra;
-			else args = {};
-
-			if(typeof args.url === "undefined") args.url = url;
-		}
-
-		if(typeof args.method === "undefined") args.method = "GET";
-
-		var stream = Stream();
-		if (args.initialValue !== undefined) stream(args.initialValue);
-		args.method = args.method.toUpperCase();
-
-		var useBody = typeof args.useBody === "boolean" ? args.useBody : args.method !== "GET" && args.method !== "TRACE";
-
-		if (typeof args.serialize !== "function") args.serialize = typeof FormData !== "undefined" && args.data instanceof FormData ? function(value) {return value} : JSON.stringify;
-		if (typeof args.deserialize !== "function") args.deserialize = deserialize;
-		if (typeof args.extract !== "function") args.extract = extract;
-
-		args.url = interpolate(args.url, args.data);
-		if (useBody) args.data = args.serialize(args.data);
-		else args.url = assemble(args.url, args.data);
-
-		var xhr = new $window.XMLHttpRequest();
-		xhr.open(args.method, args.url, typeof args.async === "boolean" ? args.async : true, typeof args.user === "string" ? args.user : undefined, typeof args.password === "string" ? args.password : undefined);
-
-		if (args.serialize === JSON.stringify && useBody) {
-			xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-		}
-		if (args.deserialize === deserialize) {
-			xhr.setRequestHeader("Accept", "application/json, text/*");
-		}
-
-		if (typeof args.config === "function") xhr = args.config(xhr, args) || xhr;
-
-		xhr.onreadystatechange = function() {
-			if (xhr.readyState === 4) {
-				try {
-					var response = (args.extract !== extract) ? args.extract(xhr, args) : args.deserialize(args.extract(xhr, args));
-					if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304) {
-						stream(cast(args.type, response));
-					}
-					else {
-						var error = new Error(xhr.responseText);
-						for (var key in response) error[key] = response[key];
-						stream.error(error);
-					}
-				}
-				catch (e) {
-					stream.error(e);
-				}
-				if (typeof oncompletion === "function") oncompletion();
-			}
+	function finalize(promise) {
+		var then = promise.then;
+		promise.then = function() {
+			count++;
+			var next = then.apply(promise, arguments);
+			next.then(complete, function(e) {
+				complete();
+				throw e
+			});
+			return finalize(next)
 		};
+		return promise
+	}
+	
+	function request(args, extra) {
+		return finalize(new Promise(function(resolve, reject) {
+			if (typeof args === "string") {
+				var url = args;
+				args = extra || {};
+				if (args.url == null) args.url = url;
+			}
 
-		if (useBody && (args.data != null)) xhr.send(args.data);
-		else xhr.send();
+			if (args.method == null) args.method = "GET";
+			args.method = args.method.toUpperCase();
 
-		return stream
+			var useBody = typeof args.useBody === "boolean" ? args.useBody : args.method !== "GET" && args.method !== "TRACE";
+
+			if (typeof args.serialize !== "function") args.serialize = typeof FormData !== "undefined" && args.data instanceof FormData ? function(value) {return value} : JSON.stringify;
+			if (typeof args.deserialize !== "function") args.deserialize = deserialize;
+			if (typeof args.extract !== "function") args.extract = extract;
+
+			args.url = interpolate(args.url, args.data);
+			if (useBody) args.data = args.serialize(args.data);
+			else args.url = assemble(args.url, args.data);
+
+			var xhr = new $window.XMLHttpRequest();
+			xhr.open(args.method, args.url, typeof args.async === "boolean" ? args.async : true, typeof args.user === "string" ? args.user : undefined, typeof args.password === "string" ? args.password : undefined);
+
+			if (args.serialize === JSON.stringify && useBody) {
+				xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+			}
+			if (args.deserialize === deserialize) {
+				xhr.setRequestHeader("Accept", "application/json, text/*");
+			}
+
+			if (typeof args.config === "function") xhr = args.config(xhr, args) || xhr;
+
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState === 4) {
+					try {
+						var response = (args.extract !== extract) ? args.extract(xhr, args) : args.deserialize(args.extract(xhr, args));
+						if ((xhr.status >= 200 && xhr.status < 300) || xhr.status === 304) {
+							resolve(cast(args.type, response));
+						}
+						else {
+							var error = new Error(xhr.responseText);
+							for (var key in response) error[key] = response[key];
+							reject(error);
+						}
+					}
+					catch (e) {
+						reject(e);
+					}
+				}
+			};
+
+			if (useBody && (args.data != null)) xhr.send(args.data);
+			else xhr.send();
+		}))
 	}
 
 	function jsonp(args) {
-		var stream = Stream();
-		if (args.initialValue !== undefined) stream(args.initialValue);
-
-		var callbackName = args.callbackName || "_mithril_" + Math.round(Math.random() * 1e16) + "_" + callbackCount++;
-		var script = $window.document.createElement("script");
-		$window[callbackName] = function(data) {
-			script.parentNode.removeChild(script);
-			stream(cast(args.type, data));
-			if (typeof oncompletion === "function") oncompletion();
-			delete $window[callbackName];
-		};
-		script.onerror = function() {
-			script.parentNode.removeChild(script);
-			stream.error(new Error("JSONP request failed"));
-			if (typeof oncompletion === "function") oncompletion();
-			delete $window[callbackName];
-		};
-		if (args.data == null) args.data = {};
-		args.url = interpolate(args.url, args.data);
-		args.data[args.callbackKey || "callback"] = callbackName;
-		script.src = assemble(args.url, args.data);
-		$window.document.documentElement.appendChild(script);
-		return stream
+		return finalize(new Promise(function(resolve, reject) {
+			var callbackName = args.callbackName || "_mithril_" + Math.round(Math.random() * 1e16) + "_" + callbackCount++;
+			var script = $window.document.createElement("script");
+			$window[callbackName] = function(data) {
+				script.parentNode.removeChild(script);
+				resolve(cast(args.type, data));
+				delete $window[callbackName];
+			};
+			script.onerror = function() {
+				script.parentNode.removeChild(script);
+				reject(new Error("JSONP request failed"));
+				delete $window[callbackName];
+			};
+			if (args.data == null) args.data = {};
+			args.url = interpolate(args.url, args.data);
+			args.data[args.callbackKey || "callback"] = callbackName;
+			script.src = assemble(args.url, args.data);
+			$window.document.documentElement.appendChild(script);
+		}))
 	}
 
 	function interpolate(url, data) {
@@ -477,8 +388,8 @@ var request$2 = function($window, Stream) {
 	return {request: request, jsonp: jsonp, setCompletionCallback: setCompletionCallback}
 };
 
-var Stream = stream;
-var request = request$2(window, Stream);
+var PromisePolyfill = promise;
+var request = request$2(window, PromisePolyfill);
 
 var pubsub = function() {
 	var callbacks = [];
@@ -709,7 +620,7 @@ var render$2 = function($window) {
 		}
 		else {
 			removeNode(old, null);
-			insertNode(parent, createNode(vnode$$1, hooks, undefined), nextSibling);
+			insertNode(parent, createNode(vnode$$1, hooks, ns), nextSibling);
 		}
 	}
 	function updateText(old, vnode$$1) {
@@ -928,6 +839,8 @@ var render$2 = function($window) {
 		else if (key in element && !isAttribute(key) && ns === undefined) {
 			//setting input[value] to same value by typing on focused element moves cursor to end in Chrome
 			if (vnode$$1.tag === "input" && key === "value" && vnode$$1.dom.value === value && vnode$$1.dom === $doc.activeElement) return
+			//setting option[value] to same value while having select open blinks select dropdown in Chrome
+			if (vnode$$1.tag === "option" && key === "value" && vnode$$1.dom.value === value) return
 			element[key] = value;
 		}
 		else {
@@ -1357,7 +1270,6 @@ requestService.setCompletionCallback(redrawService.publish);
 m.mount = mount;
 m.route = route;
 m.withAttr = withAttr;
-m.prop = stream;
 m.render = render.render;
 m.redraw = redrawService.publish;
 m.request = requestService.request;
@@ -1367,16 +1279,6 @@ m.buildQueryString = build;
 m.version = "bleeding-edge";
 
 var index = m;
-
-var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-
-
-
-
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
-}
 
 var mainloop_min = createCommonjsModule(function (module) {
 /**
@@ -1714,10 +1616,10 @@ var lost = {
 var scenes = {
     intro : {
         view : (vnode) =>
-            index(layout$$1, vnode.attrs, [
-                index(pads$1, vnode.attrs),
+            // m(layout, vnode.attrs, [
+            //     m(pads, vnode.attrs),
                 index(intro$$1, vnode.attrs)
-            ])
+            // ])
     },
     game : {
         view : (vnode) =>
