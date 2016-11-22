@@ -7,6 +7,8 @@ import scenes from "./scenes";
 
 import GameState from "./GameState";
 
+const debug = false;
+
 let state = {
     scenes : scenes,
     ui     : {
@@ -24,14 +26,14 @@ state.scene = state.scenes.intro;
 
 const comp = {
         view : () => [
-            m("div", { class : css.ticker }, state.ticker),
+            debug ? m("div", { class : css.ticker }, state.ticker) : null,
             m(state.scene, { state : state })
         ]
     },
 
     update = function(delta) {
         // debug
-        state.ticker = Math.floor(Date.now()/1000);
+        state.ticker = debug ? Math.floor(Date.now()/1000) : 0;
 
         // for ripples etc
         state.ui.update(delta);

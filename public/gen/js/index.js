@@ -1767,6 +1767,8 @@ GameState.prototype = {
     }
 };
 
+const debug = false;
+
 let state$1 = {
     scenes : scenes,
     ui     : {
@@ -1784,13 +1786,13 @@ state$1.scene = state$1.scenes.intro;
 
 const comp = {
         view : () => [
-            index("div", { class : css.ticker }, state$1.ticker),
+            debug ? index("div", { class : css.ticker }, state$1.ticker) : null,
             index(state$1.scene, { state : state$1 })
         ]
     };
 const update = function(delta) {
         // debug
-        state$1.ticker = Math.floor(Date.now()/1000);
+        state$1.ticker = debug ? Math.floor(Date.now()/1000) : 0;
 
         // for ripples etc
         state$1.ui.update(delta);
