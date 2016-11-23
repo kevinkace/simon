@@ -114,6 +114,7 @@ function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
 
+/** @constructor */
 var PromisePolyfill$1 = function(executor) {
 	if (!(this instanceof PromisePolyfill$1)) throw new Error("Promise must be called with `new`")
 	if (typeof executor !== "function") throw new TypeError("executor must be a function")
@@ -1296,6 +1297,16 @@ var css = {
 };
 
 var css$1 = {
+    "logo": "mcd7e74f43_logo",
+    "smLogo": "mcd7e74f43_smLogo"
+};
+
+var logo$$1 = {
+    view : (vnode) =>
+        index("h1", { class : vnode.attrs.small ? css$1.smLogo : css$1.logo }, "Game Name")
+};
+
+var css$2 = {
     "header": "mca3d60bea_header",
     "logo": "mca3d60bea_logo",
     "hMenu": "mca3d60bea_hMenu",
@@ -1310,16 +1321,18 @@ const nav$$1 = [{
 
 var header$$1 = {
     view : (vnode) =>
-        index("header", { class : css$1.header },
-            index("h1", { class : css$1.logo }, "looooogo"),
-            index("div", { class : css$1.hMenu },
+        index("header", { class : css$2.header },
+            index("div", { class : css$2.logo },
+                index(logo$$1, { small : true })
+            ),
+            index("div", { class : css$2.hMenu },
                 index("button", {
-                        class   : css$1.button,
+                        class   : css$2.button,
                         onclick : () => console.log("do some shit")
                     },
                     "show nav"
                 ),
-                index("nav", { class : css$1.nav },
+                index("nav", { class : css$2.nav },
                     nav$$1.map((navItem) =>
                         index("a", {
                             href    : navItem.href,
@@ -1331,7 +1344,7 @@ var header$$1 = {
         )
 };
 
-var css$2 = {
+var css$3 = {
     "footer": "mc5c0b71a6_footer",
     "sides": "mc5c0b71a6_sides",
     "count": "mc5c0b71a6_sides mc5c0b71a6_count",
@@ -1362,28 +1375,28 @@ var footer$$1 = {
             timer$$1 = timer$$1.toFixed(2);
         }
 
-        return index("footer", { class : css$2.footer },
-            index("div", { class : css$2.count },
-                index("h3", { class : css$2.countHeader },
+        return index("footer", { class : css$3.footer },
+            index("div", { class : css$3.count },
+                index("h3", { class : css$3.countHeader },
                     "steps"
                 ),
-                index("p", { class : css$2.countVal },
+                index("p", { class : css$3.countVal },
                     gameState ?
                     gameState.pattern.length :
                     null
                 )
             ),
-            index("div", { class : css$2.timer },
-                index("div", { class : css$2.timerBar }),
-                index("div", { class : css$2.timerVal },
+            index("div", { class : css$3.timer },
+                index("div", { class : css$3.timerBar }),
+                index("div", { class : css$3.timerVal },
                     timer$$1
                 )
             ),
-            index("div", { class : css$2.level },
-                index("h3", { class : css$2.levelHeader },
+            index("div", { class : css$3.level },
+                index("h3", { class : css$3.levelHeader },
                     "level"
                 ),
-                index("p", { class : css$2.levelVal },
+                index("p", { class : css$3.levelVal },
                     // hard coded for now
                     1
                 )
@@ -1392,21 +1405,21 @@ var footer$$1 = {
     }
 };
 
-var css$3 = {
+var css$4 = {
     "layout": "mc4df9e2fb_layout",
     "section": "mc4df9e2fb_section"
 };
 
 var layout$$1 = {
     view : (vnode) =>
-        index("div", { class : css$3.layout },
+        index("div", { class : css$4.layout },
             index(header$$1),
-            index("section", { class : css$3.section }, vnode.children),
+            index("section", { class : css$4.section }, vnode.children),
             index(footer$$1, vnode.attrs)
         )
 };
 
-var css$4 = {
+var css$5 = {
     "pads": "mc4dd3a996_pads",
     "quad": "mc4dd3a996_quad",
     "quad_1": "mc4dd3a996_quad mc4dd3a996_quad_1",
@@ -1500,7 +1513,7 @@ var pads$1 = {
         state.ui.ripples = state.ui.ripples || [];
 
         return index("section", {
-                class  : css$4.pads,
+                class  : css$5.pads,
                 oninit : (vnode) => {
                     state.ui.buttons = [];
                 }
@@ -1509,7 +1522,7 @@ var pads$1 = {
                 let ripples = [],
                     alight$$1  = null,
                     attrs   = {
-                        class        : css$4.button,
+                        class        : css$5.button,
                         "data-value" : pad,
                         onclick      : (e) => e.preventDefault(),
                         oncreate     : (vnode) => {
@@ -1523,7 +1536,7 @@ var pads$1 = {
                         attrs.disabled = "disabled";
 
                         if(state.gameState.alight === pad) {
-                            alight$$1 = index("span", { class : css$4.alight });
+                            alight$$1 = index("span", { class : css$5.alight });
                         }
                     }
 
@@ -1532,11 +1545,11 @@ var pads$1 = {
                     attrs.onclick = clickPad.bind(null, state);
                 }
 
-                return index("div", { class : css$4[`quad_${pad}`] },
+                return index("div", { class : css$5[`quad_${pad}`] },
                     alight$$1, // PC light
                     // User light
                     ripples.map((ripple$$1) => index("span", {
-                        class : css$4.ripple,
+                        class : css$5.ripple,
                         style : `left: ${ripple$$1.x}px; top: ${ripple$$1.y}px;`
                     })),
                     index("button", attrs, pad)
@@ -1546,16 +1559,16 @@ var pads$1 = {
     }
 };
 
-var css$5 = {
+var css$6 = {
     "overlay": "mc6a145ad9_overlay"
 };
 
 var overlay$$1 = {
     view : (vnode) =>
-        index("div", { class : css$5.overlay }, vnode.children)
+        index("div", { class : css$6.overlay }, vnode.children)
 };
 
-var css$6 = {
+var css$7 = {
     "button": "mc0023079d_button"
 };
 
@@ -1563,19 +1576,20 @@ var button$2 = {
     view : (vnode) =>
         index("button",
             Object.assign({
-                    class : css$6.button
+                    class : css$7.button
                 },
                 vnode.attrs.attrs
             ),
             (vnode.attrs.text || "")
                 .split("")
-                .map((letter) => index("i", letter))
+                .map((letter) => /\S/.test(letter) ? index("i", letter) : letter)
         )
 };
 
 var intro$$1 = {
     view : (vnode) =>
         index(overlay$$1,
+            index(logo$$1),
             index(button$2, {
                 attrs : {
                     onclick : () => {

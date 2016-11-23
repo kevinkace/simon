@@ -12,6 +12,6 @@ export default {
             ),
             (vnode.attrs.text || "")
                 .split("")
-                .map((letter) => m("i", letter))
+                .map((letter) => /\S/.test(letter) ? m("i", letter) : letter)
         )
 };

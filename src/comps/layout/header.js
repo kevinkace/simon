@@ -1,5 +1,7 @@
 import m from "mithril";
 
+import logo from "../logo";
+
 import css from "./header.css";
 
 const nav = [{
@@ -10,7 +12,9 @@ const nav = [{
 export default {
     view : (vnode) =>
         m("header", { class : css.header },
-            m("h1", { class : css.logo }, "looooogo"),
+            m("div", { class : css.logo },
+                m(logo, { small : true })
+            ),
             m("div", { class : css.hMenu },
                 m("button", {
                         class   : css.button,

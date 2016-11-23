@@ -1,0 +1,13 @@
+.logo {
+    margin: 0 0 1em;
+
+    text-align: center;
+    font-size: 4em;
+}
+
+.smLogo {
+    margin: 0;
+
+    font-size: 2em;
+    text-align: left;
+}

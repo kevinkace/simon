@@ -1,13 +1,15 @@
-    import m from "mithril";
+import m from "mithril";
 
 import css from "./intro.css";
 
+import logo from "./logo";
 import overlay from "./overlay";
 import button from "./button";
 
 export default {
     view : (vnode) =>
         m(overlay,
+            m(logo),
             m(button, {
                 attrs : {
                     onclick : () => {
